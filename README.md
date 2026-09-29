@@ -4,7 +4,7 @@ Domain model and application abstractions of [SupportToolsServer](https://github
 
 | Project | Purpose |
 |---|---|
-| `SupportToolsServerCore.Domain` | Entities with strongly-typed ids and their column-length constants (`GitIgnoreFileTypes`, `GitRepos` — a repo references its gitignore file type by id), `Primitives` (`Entity<TId>`, `ValueObject`), repository interfaces and the generic `Sync/Syncroniser<T,TId>` |
+| `SupportToolsServerCore.Domain` | Entities with strongly-typed ids and their column-length constants (`EditorConfigFileTypes`, `GitIgnoreFileTypes`, `GitRepos` — a repo references its gitignore file type by id), `Primitives` (`Entity<TId>`, `ValueObject`), repository interfaces and the generic `Sync/Syncroniser<T,TId>` |
 | `SupportToolsServerCore.Application.Abstractions` | `ISupportToolsServerDbContext`: the `DbSet`s the application sees; `SupportToolsServerDbContext` in SupportToolsServerDbPart implements it |
 
 A change to an entity needs its EF configuration in SupportToolsServerDbPart and a migration in SupportToolsServerDbTools.
