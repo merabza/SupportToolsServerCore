@@ -4,6 +4,9 @@
         <File Path="Directory.Build.props" />
         <File Path="Directory.Packages.props" />
     </Folder>
+    <Folder Name="/Tests/">
+        <Project Path="SupportToolsServerCore.Tests/SupportToolsServerCore.Tests.csproj" />
+    </Folder>
     <Project Path="SupportToolsServerCore.Application.Abstractions/SupportToolsServerCore.Application.Abstractions.csproj" />
     <Project Path="SupportToolsServerCore.Domain/SupportToolsServerCore.Domain.csproj" />
 </Solution>
