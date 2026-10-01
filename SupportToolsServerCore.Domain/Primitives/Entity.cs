@@ -1,12 +1,14 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using SystemTools.SharedKernel;
 
 namespace SupportToolsServerCore.Domain.Primitives;
 
+//საბაზო Entity დომენის მოვლენებს აგროვებს, ბაზის კონტექსტი კი მათ ცვლილებების შენახვის შემდეგ აგზავნის
 [SuppressMessage("Minor Code Smell", "S4035:Classes implementing 'IEquatable<T>' should be sealed",
     Justification =
         "This is an abstract base entity class. Equality members are sealed to prevent derived classes from changing equality semantics.")]
-public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : notnull
+public abstract class Entity<TId> : Entity, IEquatable<Entity<TId>> where TId : notnull
 {
     protected Entity(TId id)
     {

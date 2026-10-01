@@ -22,4 +22,23 @@ public class GitRepo : Entity<GitRepoId>
     public string Address { get; private set; }
     public string FolderName { get; private set; }
     public GitIgnoreFileTypeId GitIgnoreFileTypeId { get; private set; }
+
+    //ახალი რეპოზიტორიის შექმნა GitRepoAddedDomainEvent მოვლენას აგენერირებს
+    public static GitRepo Create(string name, string address, string folderName,
+        GitIgnoreFileTypeId gitIgnoreFileTypeId)
+    {
+        var gitRepo = new GitRepo(GitRepoId.CreateUnique(), name, address, folderName, gitIgnoreFileTypeId);
+        gitRepo.Raise(new GitRepoAddedDomainEvent(gitRepo.Id, name, address, folderName));
+        return gitRepo;
+    }
+
+    //არსებული რეპოზიტორიის რედაქტირება GitRepoUpdatedDomainEvent მოვლენას აგენერირებს
+    public void Update(string name, string address, string folderName, GitIgnoreFileTypeId gitIgnoreFileTypeId)
+    {
+        Name = name;
+        Address = address;
+        FolderName = folderName;
+        GitIgnoreFileTypeId = gitIgnoreFileTypeId;
+        Raise(new GitRepoUpdatedDomainEvent(Id, name, address, folderName));
+    }
 }
