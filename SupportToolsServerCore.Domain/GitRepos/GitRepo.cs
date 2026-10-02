@@ -3,14 +3,14 @@ using SupportToolsServerCore.Domain.Primitives;
 
 namespace SupportToolsServerCore.Domain.GitRepos;
 
-public class GitRepo : Entity<GitRepoId>
+public class GitRepo : VersionedEntity<GitRepoId>
 {
     public const int NameMaxLength = 50;
     public const int AddressMaxLength = 256;
     public const int FolderNameMaxLength = 100;
 
     public GitRepo(GitRepoId id, string name, string address, string folderName,
-        GitIgnoreFileTypeId gitIgnoreFileTypeId) : base(id)
+        GitIgnoreFileTypeId gitIgnoreFileTypeId, int version) : base(id, version)
     {
         Name = name;
         Address = address;
@@ -27,18 +27,20 @@ public class GitRepo : Entity<GitRepoId>
     public static GitRepo Create(string name, string address, string folderName,
         GitIgnoreFileTypeId gitIgnoreFileTypeId)
     {
-        var gitRepo = new GitRepo(GitRepoId.CreateUnique(), name, address, folderName, gitIgnoreFileTypeId);
+        var gitRepo = new GitRepo(GitRepoId.CreateUnique(), name, address, folderName, gitIgnoreFileTypeId,
+            EntityVersion.Initial);
         gitRepo.Raise(new GitRepoAddedDomainEvent(gitRepo.Id, name, address, folderName));
         return gitRepo;
     }
 
-    //არსებული რეპოზიტორიის რედაქტირება GitRepoUpdatedDomainEvent მოვლენას აგენერირებს
+    //არსებული რეპოზიტორიის რედაქტირება ვერსიას ზრდის და GitRepoUpdatedDomainEvent მოვლენას აგენერირებს
     public void Update(string name, string address, string folderName, GitIgnoreFileTypeId gitIgnoreFileTypeId)
     {
         Name = name;
         Address = address;
         FolderName = folderName;
         GitIgnoreFileTypeId = gitIgnoreFileTypeId;
+        IncrementVersion();
         Raise(new GitRepoUpdatedDomainEvent(Id, name, address, folderName));
     }
 }

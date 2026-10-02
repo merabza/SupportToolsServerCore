@@ -13,18 +13,19 @@ public sealed class GitRepoTests
     {
         var id = GitRepoId.CreateUnique();
 
-        var gitRepo = new GitRepo(id, "RepoA", "addressA", "FolderA", _cSharpId);
+        var gitRepo = new GitRepo(id, "RepoA", "addressA", "FolderA", _cSharpId, 4);
 
         Assert.Equal(id, gitRepo.Id);
         Assert.Equal("RepoA", gitRepo.Name);
         Assert.Equal("addressA", gitRepo.Address);
         Assert.Equal("FolderA", gitRepo.FolderName);
         Assert.Equal(_cSharpId, gitRepo.GitIgnoreFileTypeId);
+        Assert.Equal(4, gitRepo.Version);
         Assert.Empty(gitRepo.DomainEvents);
     }
 
     [Fact]
-    public void Create_ReturnsANewGitWithAUniqueId()
+    public void Create_ReturnsANewGitWithAUniqueIdAndTheFirstVersion()
     {
         GitRepo first = GitRepo.Create("RepoA", "addressA", "FolderA", _cSharpId);
         GitRepo second = GitRepo.Create("RepoA", "addressA", "FolderA", _cSharpId);
@@ -34,6 +35,7 @@ public sealed class GitRepoTests
         Assert.Equal("addressA", first.Address);
         Assert.Equal("FolderA", first.FolderName);
         Assert.Equal(_cSharpId, first.GitIgnoreFileTypeId);
+        Assert.Equal(1, first.Version);
     }
 
     [Fact]
@@ -49,7 +51,7 @@ public sealed class GitRepoTests
     public void Update_ChangesTheValuesKeepingTheId()
     {
         var id = GitRepoId.CreateUnique();
-        var gitRepo = new GitRepo(id, "RepoA", "addressA", "FolderA", _cSharpId);
+        var gitRepo = new GitRepo(id, "RepoA", "addressA", "FolderA", _cSharpId, 1);
         var reactId = GitIgnoreFileTypeId.CreateUnique();
 
         gitRepo.Update("RepoB", "addressB", "FolderB", reactId);
@@ -62,9 +64,21 @@ public sealed class GitRepoTests
     }
 
     [Fact]
+    public void Update_IncrementsTheVersionOnEveryCall()
+    {
+        var gitRepo = new GitRepo(GitRepoId.CreateUnique(), "RepoA", "addressA", "FolderA", _cSharpId, 3);
+
+        gitRepo.Update("RepoA", "addressA", "FolderA", _cSharpId);
+        Assert.Equal(4, gitRepo.Version);
+
+        gitRepo.Update("RepoA", "addressB", "FolderA", _cSharpId);
+        Assert.Equal(5, gitRepo.Version);
+    }
+
+    [Fact]
     public void Update_RaisesGitRepoUpdatedDomainEventWithTheNewValues()
     {
-        var gitRepo = new GitRepo(GitRepoId.CreateUnique(), "RepoA", "addressA", "FolderA", _cSharpId);
+        var gitRepo = new GitRepo(GitRepoId.CreateUnique(), "RepoA", "addressA", "FolderA", _cSharpId, 1);
 
         gitRepo.Update("RepoB", "addressB", "FolderB", _cSharpId);
 
