@@ -11,7 +11,7 @@ A change to an entity needs its EF configuration in SupportToolsServerDbPart and
 
 ## Build
 
-The projects have no sibling-repo references, so the repository builds on its own:
+`SupportToolsServerCore.Domain` references `SystemTools.SharedKernel` by relative path (`..\..\SystemTools\...`) for the domain-event base types (`Entity`, `IDomainEvent`; `GitRepo` raises `GitRepoAddedDomainEvent` and `GitRepoUpdatedDomainEvent`), so [SystemTools](https://github.com/merabza/SystemTools) must be cloned next to this repository:
 
 ```powershell
 dotnet build SupportToolsServerCore.slnx
