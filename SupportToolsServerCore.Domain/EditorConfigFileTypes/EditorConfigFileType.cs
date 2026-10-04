@@ -11,8 +11,7 @@ public class EditorConfigFileType : VersionedEntity<EditorConfigFileTypeId>
     //.editorconfig ფაილები .gitignore ფაილებზე გაცილებით დიდია: default შაბლონი უკვე 16000 სიმბოლომდეა
     public const int ContentMaxLength = 65536;
 
-    public EditorConfigFileType(EditorConfigFileTypeId id, string name, string content, int version) : base(id,
-        version)
+    public EditorConfigFileType(EditorConfigFileTypeId id, string name, string content, int version) : base(id, version)
     {
         Name = name;
         Content = content;
