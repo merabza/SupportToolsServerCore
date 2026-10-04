@@ -4,7 +4,8 @@ namespace SupportToolsServerCore.Domain.ApiClients;
 
 //API კლიენტი, SupportToolsParameters.ApiClients-ის ჩანაწერი: სახელი (dictionary-ის key), სერვერის მისამართი და API key.
 //გასაღები საიდუმლოა: ღიად ინახება (README G2), მაგრამ არსად იბეჭდება. ApiClient-ს სხვა აგრეგატები სახელით მიმართავენ
-//(DatabaseServerConnection.DbWebAgentName), ამიტომ მისი წაშლა მომხმარებლების შემოწმების შემდეგ ხდება
+//(DatabaseServerConnection.DbWebAgentName, Server.WebAgentName და WebAgentInstallerName), ამიტომ მისი წაშლა
+//მომხმარებლების შემოწმების შემდეგ ხდება
 public sealed class ApiClient : VersionedEntity<ApiClientId>
 {
     public const int NameMaxLength = 100;

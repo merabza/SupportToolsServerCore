@@ -10,6 +10,7 @@ using SupportToolsServerCore.Domain.GitRepos;
 using SupportToolsServerCore.Domain.NpmPackages;
 using SupportToolsServerCore.Domain.ReactAppTemplates;
 using SupportToolsServerCore.Domain.Runtimes;
+using SupportToolsServerCore.Domain.Servers;
 using SupportToolsServerCore.Domain.SmartSchemas;
 
 namespace SupportToolsServerCore.Application.Abstractions;
@@ -27,5 +28,6 @@ public interface ISupportToolsServerDbContext
     DbSet<NpmPackage> NpmPackages { get; set; }
     DbSet<ReactAppTemplate> ReactAppTemplates { get; set; }
     DbSet<Runtime> Runtimes { get; set; }
+    DbSet<Server> Servers { get; set; }
     DbSet<SmartSchema> SmartSchemas { get; set; }
 }
