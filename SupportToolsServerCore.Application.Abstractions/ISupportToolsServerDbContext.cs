@@ -15,6 +15,7 @@ using SupportToolsServerCore.Domain.Runtimes;
 using SupportToolsServerCore.Domain.Servers;
 using SupportToolsServerCore.Domain.Settings;
 using SupportToolsServerCore.Domain.SmartSchemas;
+using SupportToolsServerCore.Domain.StoredFiles;
 
 namespace SupportToolsServerCore.Application.Abstractions;
 
@@ -37,4 +38,5 @@ public interface ISupportToolsServerDbContext
     DbSet<Runtime> Runtimes { get; set; }
     DbSet<Server> Servers { get; set; }
     DbSet<SmartSchema> SmartSchemas { get; set; }
+    DbSet<StoredFile> StoredFiles { get; set; }
 }
