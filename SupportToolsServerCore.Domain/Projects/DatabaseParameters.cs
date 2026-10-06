@@ -4,8 +4,8 @@ using SupportToolsServerCore.Domain.SmartSchemas;
 
 namespace SupportToolsServerCore.Domain.Projects;
 
-//ბაზის პარამეტრები, კლიენტის DatabaseParameters: პროექტის DevDatabaseParameters და ProdCopyDatabaseParameters (B7-ში
-//ServerInfo-ს CurrentDatabaseParameters და NewDatabaseParameters). DbConnectionId, SmartSchemaId და FileStorageId სხვა
+//ბაზის პარამეტრები, კლიენტის DatabaseParameters: პროექტის DevDatabaseParameters და ProdCopyDatabaseParameters, ასევე
+//ServerInfo-ს CurrentDatabaseParameters და NewDatabaseParameters. DbConnectionId, SmartSchemaId და FileStorageId სხვა
 //აგრეგატების ჩანაწერებია (კონტრაქტში სახელებით). DbServerFoldersSetName ბაზის კავშირის ფოლდერების ნაკრების სახელია;
 //ნაკრები სხვა აგრეგატის შვილია, ამიტომ სერვერი მის არსებობას არ ამოწმებს. DatabaseRecoveryModel და BackupType კლიენტის
 //enum-ების სახელებია; სერვერი enum-ებს არ იცნობს და მხოლოდ სიგრძეს ამოწმებს. ცალკე ცხრილი არ აქვს: EF-ის owned

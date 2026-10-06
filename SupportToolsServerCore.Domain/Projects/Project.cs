@@ -8,7 +8,8 @@ namespace SupportToolsServerCore.Domain.Projects;
 //კოდის სახელები, ნიღბები, კანონიკური გზები (README G3: სერვერი მათ ინახავს ისე, როგორც მოვიდა), ბაზის პარამეტრები და
 //შვილი კოლექციები. ProjectType კლიენტის EProjectType-ის სახელია; სერვერი enum-ს არ იცნობს და მხოლოდ სიგრძეს ამოწმებს.
 //EditorConfigFileTypeId, git-ები და npm პაკეტები სხვა აგრეგატების ჩანაწერებია (კონტრაქტში სახელებით). KeyGuidPart
-//საიდუმლოა: ღიად ინახება (README G2), მაგრამ არსად იბეჭდება. ServerInfo-ები B7-ში დაემატება
+//საიდუმლოა: ღიად ინახება (README G2), მაგრამ არსად იბეჭდება. ServerInfo-ები (პროექტის პარამეტრები სერვერებსა და
+//გარემოებში) აგრეგატის შვილებია, თავიანთი ბაზის პარამეტრებითა და ინსტრუმენტებით
 public sealed class Project : VersionedEntity<ProjectId>
 {
     public const int NameMaxLength = 100;
@@ -33,6 +34,7 @@ public sealed class Project : VersionedEntity<ProjectId>
     private readonly List<ProjectNpmPackage> _npmPackages = [];
     private readonly List<ProjectRedundantFile> _redundantFiles = [];
     private readonly List<ProjectRouteClass> _routeClasses = [];
+    private readonly List<ServerInfo> _serverInfos = [];
 
     //ბაზის პარამეტრებსა და შვილ კოლექციებს EF კონსტრუქტორით ვერ გადასცემს და ჩანაწერის წაკითხვისას თვითონ ავსებს
     public Project(ProjectId id, string name, string projectType, string? projectGroupName,
@@ -134,6 +136,7 @@ public sealed class Project : VersionedEntity<ProjectId>
     public IReadOnlyList<ProjectAllowedTool> AllowedTools => _allowedTools;
     public IReadOnlyList<ProjectEndpoint> Endpoints => _endpoints;
     public IReadOnlyList<ProjectRouteClass> RouteClasses => _routeClasses;
+    public IReadOnlyList<ServerInfo> ServerInfos => _serverInfos;
 
     public static Project Create(string name, string projectType, string? projectGroupName,
         string? projectDescription, int majorVersion, int minorVersion, bool useAlternativeWebAgent,
@@ -151,7 +154,7 @@ public sealed class Project : VersionedEntity<ProjectId>
         DatabaseParameters? prodCopyDatabaseParameters, IEnumerable<ProjectGitRepo> gitRepos,
         IEnumerable<ProjectNpmPackage> npmPackages, IEnumerable<ProjectRedundantFile> redundantFiles,
         IEnumerable<ProjectAllowedTool> allowedTools, IEnumerable<ProjectEndpoint> endpoints,
-        IEnumerable<ProjectRouteClass> routeClasses)
+        IEnumerable<ProjectRouteClass> routeClasses, IEnumerable<ServerInfo> serverInfos)
     {
         var project = new Project(ProjectId.CreateUnique(), name, projectType, projectGroupName, projectDescription,
             majorVersion, minorVersion, useAlternativeWebAgent, editorConfigFileTypeId, mainProjectName,
@@ -165,13 +168,13 @@ public sealed class Project : VersionedEntity<ProjectId>
             prepareProdCopyDatabaseProjectParametersFilePath, pairedDbObjectsResultFileName, keyGuidPart,
             EntityVersion.Initial);
         project.ReplaceParts(devDatabaseParameters, prodCopyDatabaseParameters, gitRepos, npmPackages, redundantFiles,
-            allowedTools, endpoints, routeClasses);
+            allowedTools, endpoints, routeClasses, serverInfos);
         return project;
     }
 
-    //რედაქტირება მთელ აგრეგატს ანაცვლებს (README G7): ბაზის პარამეტრები და შვილი კოლექციები ახლით იცვლება და ვერსია
-    //ნებისმიერ ცვლილებაზე იზრდება, მათ შორის მაშინაც, როცა მხოლოდ შვილი შეიცვალა. სახელის შეცვლა (მაგალითად, მხოლოდ
-    //რეგისტრის) იგივე ჩანაწერის განახლებაა
+    //რედაქტირება მთელ აგრეგატს ანაცვლებს (README G7): ბაზის პარამეტრები და შვილი კოლექციები, ServerInfo-ების ჩათვლით,
+    //ახლით იცვლება და ვერსია ნებისმიერ ცვლილებაზე იზრდება, მათ შორის მაშინაც, როცა მხოლოდ შვილი შეიცვალა. სახელის
+    //შეცვლა (მაგალითად, მხოლოდ რეგისტრის) იგივე ჩანაწერის განახლებაა
     public void Update(string name, string projectType, string? projectGroupName, string? projectDescription,
         int majorVersion, int minorVersion, bool useAlternativeWebAgent, EditorConfigFileTypeId? editorConfigFileTypeId,
         string? mainProjectName, string? apiContractsProjectName, string? spaProjectName, string? dbContextName,
@@ -187,7 +190,7 @@ public sealed class Project : VersionedEntity<ProjectId>
         DatabaseParameters? prodCopyDatabaseParameters, IEnumerable<ProjectGitRepo> gitRepos,
         IEnumerable<ProjectNpmPackage> npmPackages, IEnumerable<ProjectRedundantFile> redundantFiles,
         IEnumerable<ProjectAllowedTool> allowedTools, IEnumerable<ProjectEndpoint> endpoints,
-        IEnumerable<ProjectRouteClass> routeClasses)
+        IEnumerable<ProjectRouteClass> routeClasses, IEnumerable<ServerInfo> serverInfos)
     {
         Name = name;
         ProjectType = projectType;
@@ -226,7 +229,7 @@ public sealed class Project : VersionedEntity<ProjectId>
         PairedDbObjectsResultFileName = pairedDbObjectsResultFileName;
         KeyGuidPart = keyGuidPart;
         ReplaceParts(devDatabaseParameters, prodCopyDatabaseParameters, gitRepos, npmPackages, redundantFiles,
-            allowedTools, endpoints, routeClasses);
+            allowedTools, endpoints, routeClasses, serverInfos);
         IncrementVersion();
     }
 
@@ -235,7 +238,7 @@ public sealed class Project : VersionedEntity<ProjectId>
         DatabaseParameters? prodCopyDatabaseParameters, IEnumerable<ProjectGitRepo> gitRepos,
         IEnumerable<ProjectNpmPackage> npmPackages, IEnumerable<ProjectRedundantFile> redundantFiles,
         IEnumerable<ProjectAllowedTool> allowedTools, IEnumerable<ProjectEndpoint> endpoints,
-        IEnumerable<ProjectRouteClass> routeClasses)
+        IEnumerable<ProjectRouteClass> routeClasses, IEnumerable<ServerInfo> serverInfos)
     {
         List<ProjectGitRepo> newGitRepos = [.. gitRepos];
         List<ProjectNpmPackage> newNpmPackages = [.. npmPackages];
@@ -243,6 +246,7 @@ public sealed class Project : VersionedEntity<ProjectId>
         List<ProjectAllowedTool> newAllowedTools = [.. allowedTools];
         List<ProjectEndpoint> newEndpoints = [.. endpoints];
         List<ProjectRouteClass> newRouteClasses = [.. routeClasses];
+        List<ServerInfo> newServerInfos = [.. serverInfos];
         DevDatabaseParameters = devDatabaseParameters;
         ProdCopyDatabaseParameters = prodCopyDatabaseParameters;
         Replace(_gitRepos, newGitRepos);
@@ -251,6 +255,7 @@ public sealed class Project : VersionedEntity<ProjectId>
         Replace(_allowedTools, newAllowedTools);
         Replace(_endpoints, newEndpoints);
         Replace(_routeClasses, newRouteClasses);
+        Replace(_serverInfos, newServerInfos);
     }
 
     private static void Replace<T>(List<T> items, List<T> newItems)

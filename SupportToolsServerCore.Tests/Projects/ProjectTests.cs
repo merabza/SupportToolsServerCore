@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using SupportToolsServerCore.Domain.DatabaseServerConnections;
+using SupportToolsServerCore.Domain.DeploymentEnvironments;
 using SupportToolsServerCore.Domain.EditorConfigFileTypes;
 using SupportToolsServerCore.Domain.FileStorages;
 using SupportToolsServerCore.Domain.GitRepos;
 using SupportToolsServerCore.Domain.NpmPackages;
 using SupportToolsServerCore.Domain.Projects;
+using SupportToolsServerCore.Domain.Servers;
 using SupportToolsServerCore.Domain.SmartSchemas;
 using Xunit;
 
@@ -32,7 +34,8 @@ public sealed class ProjectTests
     private static void UpdateProject(Project project, string s, DatabaseParameters? dev,
         DatabaseParameters? prodCopy, IEnumerable<ProjectGitRepo> gitRepos, IEnumerable<ProjectNpmPackage> npmPackages,
         IEnumerable<ProjectRedundantFile> redundantFiles, IEnumerable<ProjectAllowedTool> allowedTools,
-        IEnumerable<ProjectEndpoint> endpoints, IEnumerable<ProjectRouteClass> routeClasses)
+        IEnumerable<ProjectEndpoint> endpoints, IEnumerable<ProjectRouteClass> routeClasses,
+        IEnumerable<ServerInfo>? serverInfos = null)
     {
         project.Update("Name" + s, "Type" + s, "Group" + s, "Description" + s, 3, 7, true, EditorConfigId,
             "Main" + s, "ApiContracts" + s, "Spa" + s, "DbContext" + s, "Prefix" + s, "ScaffoldSeeder" + s,
@@ -41,7 +44,13 @@ public sealed class ProjectTests
             "MigrationStartup" + s, "Migration" + s, "SeederRules" + s, "OldDataConvertor" + s, "Seed" + s,
             "SeedParameters" + s, "ExcludesRules" + s, "AppSetEnKeys" + s, "MigrationSql" + s, "PrepareProdCopy" + s,
             "PrepareProdCopyParameters" + s, "PairedDbObjects" + s, "made-up-key" + s, dev, prodCopy, gitRepos,
-            npmPackages, redundantFiles, allowedTools, endpoints, routeClasses);
+            npmPackages, redundantFiles, allowedTools, endpoints, routeClasses, serverInfos ?? []);
+    }
+
+    private static ServerInfo NewServerInfo(int serverSidePort, params string[] toolNames)
+    {
+        return ServerInfo.Create(ServerId.CreateUnique(), DeploymentEnvironmentId.CreateUnique(), null,
+            serverSidePort, "v1", null, null, "merab", null, null, toolNames.Select(ServerInfoAllowedTool.Create));
     }
 
     private static void AssertFields(Project project, string s)
@@ -108,6 +117,7 @@ public sealed class ProjectTests
         Assert.Empty(project.AllowedTools);
         Assert.Empty(project.Endpoints);
         Assert.Empty(project.RouteClasses);
+        Assert.Empty(project.ServerInfos);
         Assert.Equal(5, project.Version);
         Assert.Empty(project.DomainEvents);
     }
@@ -123,14 +133,15 @@ public sealed class ProjectTests
         ProjectEndpoint endpoint = ProjectEndpoint.Create("Upload", "Upload", "/upload", true, "Post", "Command",
             null, false);
         ProjectRouteClass routeClass = ProjectRouteClass.Create("Git", "api", "v1", "/git");
+        ServerInfo serverInfo = NewServerInfo(5022, "ProgramUpdater");
 
         Project first = Project.Create("App", "IsService", null, null, 1, 0, false, null, null, null, null, null,
             null, null, null, null, null, null, null, null, @"D:\1WorkDotnet\App", null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null, dev, null, [gitRepo], [npmPackage],
-            [redundantFile], [allowedTool], [endpoint], [routeClass]);
+            [redundantFile], [allowedTool], [endpoint], [routeClass], [serverInfo]);
         Project second = Project.Create("App", "IsService", null, null, 1, 0, false, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, [], [], [], [], [], []);
+            null, null, null, null, null, null, null, null, null, [], [], [], [], [], [], []);
 
         Assert.NotEqual(first.Id, second.Id);
         Assert.Equal("App", first.Name);
@@ -148,7 +159,9 @@ public sealed class ProjectTests
         Assert.Equal([allowedTool], first.AllowedTools);
         Assert.Equal([endpoint], first.Endpoints);
         Assert.Equal([routeClass], first.RouteClasses);
+        Assert.Equal([serverInfo], first.ServerInfos);
         Assert.Empty(second.GitRepos);
+        Assert.Empty(second.ServerInfos);
         Assert.Equal(1, first.Version);
         Assert.Empty(first.DomainEvents);
     }
@@ -164,7 +177,7 @@ public sealed class ProjectTests
             [ProjectNpmPackage.Create(NpmPackageId.CreateUnique())], [ProjectRedundantFile.Create("*.pdb")],
             [ProjectAllowedTool.Create("SeedData")],
             [ProjectEndpoint.Create("Old", null, null, false, "Get", "Query", null, false)],
-            [ProjectRouteClass.Create("Old", "api", "v1", "/old")]);
+            [ProjectRouteClass.Create("Old", "api", "v1", "/old")], [NewServerInfo(5022), NewServerInfo(5023)]);
         DatabaseParameters dev = NewDatabaseParameters("AppDev");
         DatabaseParameters prodCopy = NewDatabaseParameters("AppProdCopy");
         ProjectGitRepo gitRepo = ProjectGitRepo.Create(GitRepoId.CreateUnique(), EProjectGitRepoKind.ScaffoldSeed);
@@ -173,9 +186,10 @@ public sealed class ProjectTests
         ProjectAllowedTool allowedTool = ProjectAllowedTool.Create("GenerateApiRoutes");
         ProjectEndpoint endpoint = ProjectEndpoint.Create("New", "New", "/new", true, "Post", "Command", "int", true);
         ProjectRouteClass routeClass = ProjectRouteClass.Create("New", "api", "v2", "/new");
+        ServerInfo serverInfo = NewServerInfo(5050, "ProgramUpdater");
 
         UpdateProject(project, "2", dev, prodCopy, [gitRepo], [npmPackage], [redundantFile], [allowedTool],
-            [endpoint], [routeClass]);
+            [endpoint], [routeClass], [serverInfo]);
 
         Assert.Equal(id, project.Id);
         AssertFields(project, "2");
@@ -188,6 +202,7 @@ public sealed class ProjectTests
         Assert.Equal([allowedTool], project.AllowedTools);
         Assert.Equal([endpoint], project.Endpoints);
         Assert.Equal([routeClass], project.RouteClasses);
+        Assert.Equal([serverInfo], project.ServerInfos);
         Assert.Equal(4, project.Version);
 
         UpdateProject(project, "2", null, null, [], [], [], [], [], []);
@@ -199,6 +214,7 @@ public sealed class ProjectTests
         Assert.Empty(project.AllowedTools);
         Assert.Empty(project.Endpoints);
         Assert.Empty(project.RouteClasses);
+        Assert.Empty(project.ServerInfos);
         Assert.Equal(5, project.Version);
     }
 
@@ -216,6 +232,25 @@ public sealed class ProjectTests
         Assert.Equal(3, project.Version);
     }
 
+    //A server info has no version of its own: adding, changing and removing one is a new version of the project
+    [Fact]
+    public void Update_IncrementsTheVersion_WhenOnlyTheServerInfosChange()
+    {
+        Project project = NewProject(ProjectId.CreateUnique(), "1", 1);
+
+        UpdateProject(project, "1", null, null, [], [], [], [], [], [], [NewServerInfo(5022)]);
+        Assert.Equal(2, project.Version);
+
+        UpdateProject(project, "1", null, null, [], [], [], [], [], [], [NewServerInfo(5023, "ServiceStarter")]);
+        Assert.Equal(5023, Assert.Single(project.ServerInfos).ServerSidePort);
+        Assert.Equal(3, project.Version);
+
+        UpdateProject(project, "1", null, null, [], [], [], [], [], []);
+        Assert.Empty(project.ServerInfos);
+        Assert.Equal(4, project.Version);
+        AssertFields(project, "1");
+    }
+
     //The new parts may come from the current ones, e.g. the same lists again
     [Fact]
     public void Update_KeepsTheChildren_WhenTheyAreGivenFromTheAggregateItself()
@@ -228,16 +263,17 @@ public sealed class ProjectTests
             ], [ProjectNpmPackage.Create(NpmPackageId.CreateUnique())], [ProjectRedundantFile.Create("*.pdb")],
             [ProjectAllowedTool.Create("SeedData")],
             [ProjectEndpoint.Create("Get", null, null, false, "Get", "Query", null, false)],
-            [ProjectRouteClass.Create("Git", null, null, null)]);
+            [ProjectRouteClass.Create("Git", null, null, null)], [NewServerInfo(5022), NewServerInfo(5023)]);
         List<ProjectGitRepo> gitRepos = [.. project.GitRepos];
         List<ProjectNpmPackage> npmPackages = [.. project.NpmPackages];
         List<ProjectRedundantFile> redundantFiles = [.. project.RedundantFiles];
         List<ProjectAllowedTool> allowedTools = [.. project.AllowedTools];
         List<ProjectEndpoint> endpoints = [.. project.Endpoints];
         List<ProjectRouteClass> routeClasses = [.. project.RouteClasses];
+        List<ServerInfo> serverInfos = [.. project.ServerInfos];
 
         UpdateProject(project, "1", null, null, project.GitRepos, project.NpmPackages, project.RedundantFiles,
-            project.AllowedTools, project.Endpoints, project.RouteClasses);
+            project.AllowedTools, project.Endpoints, project.RouteClasses, project.ServerInfos);
 
         Assert.Equal(gitRepos, project.GitRepos);
         Assert.Equal(npmPackages, project.NpmPackages);
@@ -245,6 +281,7 @@ public sealed class ProjectTests
         Assert.Equal(allowedTools, project.AllowedTools);
         Assert.Equal(endpoints, project.Endpoints);
         Assert.Equal(routeClasses, project.RouteClasses);
+        Assert.Equal(serverInfos, project.ServerInfos);
         Assert.Equal(3, project.Version);
     }
 
@@ -254,15 +291,19 @@ public sealed class ProjectTests
     {
         List<ProjectRedundantFile> redundantFiles = [ProjectRedundantFile.Create("*.pdb")];
         List<ProjectAllowedTool> allowedTools = [ProjectAllowedTool.Create("SeedData")];
+        List<ServerInfo> serverInfos = [NewServerInfo(5022)];
 
         Project project = Project.Create("App", "Standard", null, null, 1, 0, false, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, [], [], redundantFiles, allowedTools, [], []);
+            null, null, null, null, null, null, null, null, null, [], [], redundantFiles, allowedTools, [], [],
+            serverInfos);
         redundantFiles.Add(ProjectRedundantFile.Create("*.xml"));
         allowedTools.Add(ProjectAllowedTool.Create("GenerateApiRoutes"));
+        serverInfos.Add(NewServerInfo(5023));
 
         Assert.Equal(["*.pdb"], project.RedundantFiles.Select(x => x.FileName));
         Assert.Equal(["SeedData"], project.AllowedTools.Select(x => x.ToolName));
+        Assert.Equal([5022], project.ServerInfos.Select(x => x.ServerSidePort));
     }
 
     [Fact]
