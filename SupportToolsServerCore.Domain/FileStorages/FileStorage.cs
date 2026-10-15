@@ -16,7 +16,8 @@ public sealed class FileStorage : VersionedEntity<FileStorageId>
     public const int PasswordMaxLength = 256;
 
     public FileStorage(FileStorageId id, string name, string? fileStoragePath, string? userName, string? password,
-        //int fileNameMaxLength, int fileSizeSplitPositionInRow, 
+        int fileNameMaxLength,
+        int fileSizeSplitPositionInRow,
         int ftpSiteLsFileOffset, int version) : base(id,
         version)
     {
@@ -24,8 +25,8 @@ public sealed class FileStorage : VersionedEntity<FileStorageId>
         FileStoragePath = fileStoragePath;
         UserName = userName;
         Password = password;
-        //FileNameMaxLength = fileNameMaxLength;
-        //FileSizeSplitPositionInRow = fileSizeSplitPositionInRow;
+        FileNameMaxLength = fileNameMaxLength;
+        FileSizeSplitPositionInRow = fileSizeSplitPositionInRow;
         FtpSiteLsFileOffset = ftpSiteLsFileOffset;
     }
 
@@ -35,31 +36,33 @@ public sealed class FileStorage : VersionedEntity<FileStorageId>
     public string? Password { get; private set; }
 
     //ფაილსაცავში ფაილის სახელის მაქსიმალური სიგრძე (კლიენტის პარამეტრი, არა სვეტის სიგრძე)
-    //public int FileNameMaxLength { get; private set; }
+    public int FileNameMaxLength { get; private set; }
 
-    //public int FileSizeSplitPositionInRow { get; private set; }
+    public int FileSizeSplitPositionInRow { get; private set; }
     public int FtpSiteLsFileOffset { get; private set; }
 
     public static FileStorage Create(string name, string? fileStoragePath, string? userName, string? password,
-        //int fileNameMaxLength, int fileSizeSplitPositionInRow, 
+        int fileNameMaxLength,
+        int fileSizeSplitPositionInRow,
         int ftpSiteLsFileOffset)
     {
         return new FileStorage(FileStorageId.CreateUnique(), name, fileStoragePath, userName, password,
-            //fileNameMaxLength, fileSizeSplitPositionInRow, 
+            fileNameMaxLength,
+            fileSizeSplitPositionInRow,
             ftpSiteLsFileOffset, EntityVersion.Initial);
     }
 
     //რედაქტირება ვერსიას ზრდის. სახელის შეცვლა (მაგალითად, მხოლოდ რეგისტრის) იგივე ჩანაწერის განახლებაა
     public void Update(string name, string? fileStoragePath, string? userName, string? password,
-        //int fileNameMaxLength, int fileSizeSplitPositionInRow, 
+        int fileNameMaxLength, int fileSizeSplitPositionInRow,
         int ftpSiteLsFileOffset)
     {
         Name = name;
         FileStoragePath = fileStoragePath;
         UserName = userName;
         Password = password;
-        //FileNameMaxLength = fileNameMaxLength;
-        //FileSizeSplitPositionInRow = fileSizeSplitPositionInRow;
+        FileNameMaxLength = fileNameMaxLength;
+        FileSizeSplitPositionInRow = fileSizeSplitPositionInRow;
         FtpSiteLsFileOffset = ftpSiteLsFileOffset;
         IncrementVersion();
     }
