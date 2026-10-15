@@ -4,6 +4,9 @@
         <File Path="Directory.Build.props" />
         <File Path="Directory.Packages.props" />
     </Folder>
+    <Folder Name="/SystemTools/">
+        <Project Path="../SystemTools/SystemTools.SharedKernel/SystemTools.SharedKernel.csproj" />
+    </Folder>
     <Folder Name="/Tests/">
         <Project Path="SupportToolsServerCore.Tests/SupportToolsServerCore.Tests.csproj" />
     </Folder>
