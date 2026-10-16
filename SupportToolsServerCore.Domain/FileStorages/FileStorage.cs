@@ -43,7 +43,7 @@ public sealed class FileStorage : VersionedEntity<FileStorageId>
 
     public static FileStorage Create(string name, string? fileStoragePath, string? userName, string? password,
         //int fileNameMaxLength,
-        int fileSizeSplitPositionInRow,
+        //int fileSizeSplitPositionInRow,
         int ftpSiteLsFileOffset)
     {
         return new FileStorage(FileStorageId.CreateUnique(), name, fileStoragePath, userName, password,
@@ -55,7 +55,7 @@ public sealed class FileStorage : VersionedEntity<FileStorageId>
     //რედაქტირება ვერსიას ზრდის. სახელის შეცვლა (მაგალითად, მხოლოდ რეგისტრის) იგივე ჩანაწერის განახლებაა
     public void Update(string name, string? fileStoragePath, string? userName, string? password,
         //int fileNameMaxLength, 
-        int fileSizeSplitPositionInRow,
+        //int fileSizeSplitPositionInRow,
         int ftpSiteLsFileOffset)
     {
         Name = name;
