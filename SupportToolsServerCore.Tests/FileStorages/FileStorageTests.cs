@@ -34,10 +34,12 @@ public sealed class FileStorageTests
     {
         FileStorage first = FileStorage.Create("LocalBak", @"D:\Bak", null, null, 
             //0, 
-            0, 0);
+            //0, 
+            0);
         FileStorage second = FileStorage.Create("LocalBak", @"D:\Bak", null, null, 
             //0, 
-            0, 0);
+            //0, 
+            0);
 
         Assert.NotEqual(first.Id, second.Id);
         Assert.Equal("LocalBak", first.Name);
@@ -62,7 +64,8 @@ public sealed class FileStorageTests
 
         fileStorage.Update("EXCHANGE", "ftp://ftp.example.com/b/", "user-b", "password-b", 
             //100, 
-            5, 2);
+            //5, 
+            2);
 
         Assert.Equal(id, fileStorage.Id);
         Assert.Equal("EXCHANGE", fileStorage.Name);
@@ -76,7 +79,8 @@ public sealed class FileStorageTests
 
         fileStorage.Update("EXCHANGE", null, null, null, 
             //0, 
-            0, 0);
+            //0, 
+            0);
         Assert.Null(fileStorage.FileStoragePath);
         Assert.Null(fileStorage.UserName);
         Assert.Null(fileStorage.Password);
