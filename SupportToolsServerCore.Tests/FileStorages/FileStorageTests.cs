@@ -14,7 +14,8 @@ public sealed class FileStorageTests
         var fileStorage = new FileStorage(id, "Exchange", "ftp://ftp.example.com/exchange/", "made-up-user",
             "made-up-password", 
             //255, 
-            4, 1, 5);
+            //4, 
+            1, 5);
 
         Assert.Equal(id, fileStorage.Id);
         Assert.Equal("Exchange", fileStorage.Name);
@@ -22,7 +23,7 @@ public sealed class FileStorageTests
         Assert.Equal("made-up-user", fileStorage.UserName);
         Assert.Equal("made-up-password", fileStorage.Password);
         //Assert.Equal(255, fileStorage.FileNameMaxLength);
-        Assert.Equal(4, fileStorage.FileSizeSplitPositionInRow);
+        //Assert.Equal(4, fileStorage.FileSizeSplitPositionInRow);
         Assert.Equal(1, fileStorage.FtpSiteLsFileOffset);
         Assert.Equal(5, fileStorage.Version);
         Assert.Empty(fileStorage.DomainEvents);
@@ -44,7 +45,7 @@ public sealed class FileStorageTests
         Assert.Null(first.UserName);
         Assert.Null(first.Password);
         //Assert.Equal(0, first.FileNameMaxLength);
-        Assert.Equal(0, first.FileSizeSplitPositionInRow);
+        //Assert.Equal(0, first.FileSizeSplitPositionInRow);
         Assert.Equal(0, first.FtpSiteLsFileOffset);
         Assert.Equal(1, first.Version);
         Assert.Empty(first.DomainEvents);
@@ -56,7 +57,7 @@ public sealed class FileStorageTests
         var id = FileStorageId.CreateUnique();
         var fileStorage = new FileStorage(id, "Exchange", "ftp://ftp.example.com/a/", "user-a", "password-a", 
             //255, 
-            4,
+            //4,
             1, 2);
 
         fileStorage.Update("EXCHANGE", "ftp://ftp.example.com/b/", "user-b", "password-b", 
@@ -69,7 +70,7 @@ public sealed class FileStorageTests
         Assert.Equal("user-b", fileStorage.UserName);
         Assert.Equal("password-b", fileStorage.Password);
         //Assert.Equal(100, fileStorage.FileNameMaxLength);
-        Assert.Equal(5, fileStorage.FileSizeSplitPositionInRow);
+        //Assert.Equal(5, fileStorage.FileSizeSplitPositionInRow);
         Assert.Equal(2, fileStorage.FtpSiteLsFileOffset);
         Assert.Equal(3, fileStorage.Version);
 
