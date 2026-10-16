@@ -17,7 +17,7 @@ public sealed class FileStorage : VersionedEntity<FileStorageId>
 
     public FileStorage(FileStorageId id, string name, string? fileStoragePath, string? userName, string? password,
         //int fileNameMaxLength,
-        int fileSizeSplitPositionInRow,
+        //int fileSizeSplitPositionInRow,
         int ftpSiteLsFileOffset, int version) : base(id,
         version)
     {
@@ -26,7 +26,7 @@ public sealed class FileStorage : VersionedEntity<FileStorageId>
         UserName = userName;
         Password = password;
         //FileNameMaxLength = fileNameMaxLength;
-        FileSizeSplitPositionInRow = fileSizeSplitPositionInRow;
+        //FileSizeSplitPositionInRow = fileSizeSplitPositionInRow;
         FtpSiteLsFileOffset = ftpSiteLsFileOffset;
     }
 
@@ -38,7 +38,7 @@ public sealed class FileStorage : VersionedEntity<FileStorageId>
     //ფაილსაცავში ფაილის სახელის მაქსიმალური სიგრძე (კლიენტის პარამეტრი, არა სვეტის სიგრძე)
     //public int FileNameMaxLength { get; private set; }
 
-    public int FileSizeSplitPositionInRow { get; private set; }
+    //public int FileSizeSplitPositionInRow { get; private set; }
     public int FtpSiteLsFileOffset { get; private set; }
 
     public static FileStorage Create(string name, string? fileStoragePath, string? userName, string? password,
@@ -48,7 +48,7 @@ public sealed class FileStorage : VersionedEntity<FileStorageId>
     {
         return new FileStorage(FileStorageId.CreateUnique(), name, fileStoragePath, userName, password,
             //fileNameMaxLength,
-            fileSizeSplitPositionInRow,
+            //fileSizeSplitPositionInRow,
             ftpSiteLsFileOffset, EntityVersion.Initial);
     }
 
@@ -63,7 +63,7 @@ public sealed class FileStorage : VersionedEntity<FileStorageId>
         UserName = userName;
         Password = password;
         //FileNameMaxLength = fileNameMaxLength;
-        FileSizeSplitPositionInRow = fileSizeSplitPositionInRow;
+        //FileSizeSplitPositionInRow = fileSizeSplitPositionInRow;
         FtpSiteLsFileOffset = ftpSiteLsFileOffset;
         IncrementVersion();
     }
