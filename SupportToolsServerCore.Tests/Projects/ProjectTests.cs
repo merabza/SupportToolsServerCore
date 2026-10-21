@@ -21,7 +21,7 @@ public sealed class ProjectTests
     private static Project NewProject(ProjectId id, string s, int version,
         EditorConfigFileTypeId? editorConfigFileTypeId = null)
     {
-        return new Project(id, "Name" + s, "Type" + s, "Group" + s, "Description" + s, 3, 7, true,
+        return new Project(id, "Name" + s, "Type" + s, "Group" + s, "Description" + s, 3, 7, true, true,
             editorConfigFileTypeId, "Main" + s, "ApiContracts" + s, "Spa" + s, "DbContext" + s, "Prefix" + s,
             "ScaffoldSeeder" + s, "DbContextProject" + s, "NewDataSeeding" + s, "ArchiveMask" + s,
             "ArchiveExtension" + s, "ParametersMask" + s, "ParametersExtension" + s, "Folder" + s, "Solution" + s,
@@ -37,7 +37,7 @@ public sealed class ProjectTests
         IEnumerable<ProjectEndpoint> endpoints, IEnumerable<ProjectRouteClass> routeClasses,
         IEnumerable<ServerInfo>? serverInfos = null)
     {
-        project.Update("Name" + s, "Type" + s, "Group" + s, "Description" + s, 3, 7, true, EditorConfigId,
+        project.Update("Name" + s, "Type" + s, "Group" + s, "Description" + s, 3, 7, true, true, EditorConfigId,
             "Main" + s, "ApiContracts" + s, "Spa" + s, "DbContext" + s, "Prefix" + s, "ScaffoldSeeder" + s,
             "DbContextProject" + s, "NewDataSeeding" + s, "ArchiveMask" + s, "ArchiveExtension" + s,
             "ParametersMask" + s, "ParametersExtension" + s, "Folder" + s, "Solution" + s, "Security" + s,
@@ -62,6 +62,7 @@ public sealed class ProjectTests
         Assert.Equal(3, project.MajorVersion);
         Assert.Equal(7, project.MinorVersion);
         Assert.True(project.UseAlternativeWebAgent);
+        Assert.True(project.UseLocalPackages);
         Assert.Equal("Main" + s, project.MainProjectName);
         Assert.Equal("ApiContracts" + s, project.ApiContractsProjectName);
         Assert.Equal("Spa" + s, project.SpaProjectName);
@@ -135,11 +136,11 @@ public sealed class ProjectTests
         ProjectRouteClass routeClass = ProjectRouteClass.Create("Git", "api", "v1", "/git");
         ServerInfo serverInfo = NewServerInfo(5022, "ProgramUpdater");
 
-        Project first = Project.Create("App", "IsService", null, null, 1, 0, false, null, null, null, null, null,
+        Project first = Project.Create("App", "IsService", null, null, 1, 0, false, false, null, null, null, null, null,
             null, null, null, null, null, null, null, null, @"D:\1WorkDotnet\App", null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null, dev, null, [gitRepo], [npmPackage],
             [redundantFile], [allowedTool], [endpoint], [routeClass], [serverInfo]);
-        Project second = Project.Create("App", "IsService", null, null, 1, 0, false, null, null, null, null, null,
+        Project second = Project.Create("App", "IsService", null, null, 1, 0, false, false, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, [], [], [], [], [], [], []);
 
@@ -293,7 +294,7 @@ public sealed class ProjectTests
         List<ProjectAllowedTool> allowedTools = [ProjectAllowedTool.Create("SeedData")];
         List<ServerInfo> serverInfos = [NewServerInfo(5022)];
 
-        Project project = Project.Create("App", "Standard", null, null, 1, 0, false, null, null, null, null, null,
+        Project project = Project.Create("App", "Standard", null, null, 1, 0, false, false, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
             null, null, null, null, null, null, null, null, null, [], [], redundantFiles, allowedTools, [], [],
             serverInfos);
