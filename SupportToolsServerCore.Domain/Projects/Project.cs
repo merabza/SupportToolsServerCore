@@ -17,7 +17,7 @@ public sealed class Project : VersionedEntity<ProjectId>
     public const int ProjectGroupNameMaxLength = 100;
     public const int ProjectDescriptionMaxLength = 255;
 
-    //solution-ის პროექტების, DbContext-ის კლასისა და მოკლე პრეფიქსის სახელები (MainProjectName … ProjectShortPrefix)
+    //solution-ის პროექტებისა და DbContext-ის კლასის სახელები (MainProjectName … DbContextName)
     public const int CodeNameMaxLength = 100;
 
     //თარიღის ნიღბები და გაფართოებები, GlobalSettings-ის იგივე ველების მსგავსად
@@ -41,16 +41,13 @@ public sealed class Project : VersionedEntity<ProjectId>
         string? projectDescription, int majorVersion, int minorVersion, bool useAlternativeWebAgent,
         bool useLocalPackages, EditorConfigFileTypeId? editorConfigFileTypeId, string? mainProjectName,
         string? apiContractsProjectName,
-        string? spaProjectName, string? dbContextName, string? projectShortPrefix, string? scaffoldSeederProjectName,
-        string? dbContextProjectName, string? newDataSeedingClassLibProjectName, string? programArchiveDateMask,
+        string? spaProjectName, string? dbContextName, string? programArchiveDateMask,
         string? programArchiveExtension, string? parametersFileDateMask, string? parametersFileExtension,
         string? projectFolderName, string? solutionFileName, string? projectSecurityFolderPath,
         string? migrationStartupProjectFilePath, string? migrationProjectFilePath,
         string? dataSeederRulesByTableStartupProjectFilePath, string? oldDataConvertorForDataSeeder,
-        string? seedProjectFilePath, string? seedProjectParametersFilePath, string? excludesRulesParametersFilePath,
-        string? appSetEnKeysJsonFileName, string? migrationSqlFilesFolder,
-        string? prepareProdCopyDatabaseProjectFilePath, string? prepareProdCopyDatabaseProjectParametersFilePath,
-        string? pairedDbObjectsResultFileName, string? keyGuidPart, int version) : base(id, version)
+        string? appSetEnKeysJsonFileName, string? pairedDbObjectsResultFileName, string? keyGuidPart,
+        int version) : base(id, version)
     {
         Name = name;
         ProjectType = projectType;
@@ -65,10 +62,6 @@ public sealed class Project : VersionedEntity<ProjectId>
         ApiContractsProjectName = apiContractsProjectName;
         SpaProjectName = spaProjectName;
         DbContextName = dbContextName;
-        ProjectShortPrefix = projectShortPrefix;
-        ScaffoldSeederProjectName = scaffoldSeederProjectName;
-        DbContextProjectName = dbContextProjectName;
-        NewDataSeedingClassLibProjectName = newDataSeedingClassLibProjectName;
         ProgramArchiveDateMask = programArchiveDateMask;
         ProgramArchiveExtension = programArchiveExtension;
         ParametersFileDateMask = parametersFileDateMask;
@@ -80,13 +73,7 @@ public sealed class Project : VersionedEntity<ProjectId>
         MigrationProjectFilePath = migrationProjectFilePath;
         DataSeederRulesByTableStartupProjectFilePath = dataSeederRulesByTableStartupProjectFilePath;
         OldDataConvertorForDataSeeder = oldDataConvertorForDataSeeder;
-        SeedProjectFilePath = seedProjectFilePath;
-        SeedProjectParametersFilePath = seedProjectParametersFilePath;
-        ExcludesRulesParametersFilePath = excludesRulesParametersFilePath;
         AppSetEnKeysJsonFileName = appSetEnKeysJsonFileName;
-        MigrationSqlFilesFolder = migrationSqlFilesFolder;
-        PrepareProdCopyDatabaseProjectFilePath = prepareProdCopyDatabaseProjectFilePath;
-        PrepareProdCopyDatabaseProjectParametersFilePath = prepareProdCopyDatabaseProjectParametersFilePath;
         PairedDbObjectsResultFileName = pairedDbObjectsResultFileName;
         KeyGuidPart = keyGuidPart;
     }
@@ -110,10 +97,6 @@ public sealed class Project : VersionedEntity<ProjectId>
     public string? ApiContractsProjectName { get; private set; }
     public string? SpaProjectName { get; private set; }
     public string? DbContextName { get; private set; }
-    public string? ProjectShortPrefix { get; private set; }
-    public string? ScaffoldSeederProjectName { get; private set; }
-    public string? DbContextProjectName { get; private set; }
-    public string? NewDataSeedingClassLibProjectName { get; private set; }
     public string? ProgramArchiveDateMask { get; private set; }
     public string? ProgramArchiveExtension { get; private set; }
     public string? ParametersFileDateMask { get; private set; }
@@ -125,13 +108,7 @@ public sealed class Project : VersionedEntity<ProjectId>
     public string? MigrationProjectFilePath { get; private set; }
     public string? DataSeederRulesByTableStartupProjectFilePath { get; private set; }
     public string? OldDataConvertorForDataSeeder { get; private set; }
-    public string? SeedProjectFilePath { get; private set; }
-    public string? SeedProjectParametersFilePath { get; private set; }
-    public string? ExcludesRulesParametersFilePath { get; private set; }
     public string? AppSetEnKeysJsonFileName { get; private set; }
-    public string? MigrationSqlFilesFolder { get; private set; }
-    public string? PrepareProdCopyDatabaseProjectFilePath { get; private set; }
-    public string? PrepareProdCopyDatabaseProjectParametersFilePath { get; private set; }
     public string? PairedDbObjectsResultFileName { get; private set; }
     public string? KeyGuidPart { get; private set; }
     public DatabaseParameters? DevDatabaseParameters { get; private set; }
@@ -148,16 +125,13 @@ public sealed class Project : VersionedEntity<ProjectId>
         string? projectDescription, int majorVersion, int minorVersion, bool useAlternativeWebAgent,
         bool useLocalPackages, EditorConfigFileTypeId? editorConfigFileTypeId, string? mainProjectName,
         string? apiContractsProjectName,
-        string? spaProjectName, string? dbContextName, string? projectShortPrefix, string? scaffoldSeederProjectName,
-        string? dbContextProjectName, string? newDataSeedingClassLibProjectName, string? programArchiveDateMask,
+        string? spaProjectName, string? dbContextName, string? programArchiveDateMask,
         string? programArchiveExtension, string? parametersFileDateMask, string? parametersFileExtension,
         string? projectFolderName, string? solutionFileName, string? projectSecurityFolderPath,
         string? migrationStartupProjectFilePath, string? migrationProjectFilePath,
         string? dataSeederRulesByTableStartupProjectFilePath, string? oldDataConvertorForDataSeeder,
-        string? seedProjectFilePath, string? seedProjectParametersFilePath, string? excludesRulesParametersFilePath,
-        string? appSetEnKeysJsonFileName, string? migrationSqlFilesFolder,
-        string? prepareProdCopyDatabaseProjectFilePath, string? prepareProdCopyDatabaseProjectParametersFilePath,
-        string? pairedDbObjectsResultFileName, string? keyGuidPart, DatabaseParameters? devDatabaseParameters,
+        string? appSetEnKeysJsonFileName, string? pairedDbObjectsResultFileName, string? keyGuidPart,
+        DatabaseParameters? devDatabaseParameters,
         DatabaseParameters? prodCopyDatabaseParameters, IEnumerable<ProjectGitRepo> gitRepos,
         IEnumerable<ProjectNpmPackage> npmPackages, IEnumerable<ProjectRedundantFile> redundantFiles,
         IEnumerable<ProjectAllowedTool> allowedTools, IEnumerable<ProjectEndpoint> endpoints,
@@ -166,15 +140,11 @@ public sealed class Project : VersionedEntity<ProjectId>
         var project = new Project(ProjectId.CreateUnique(), name, projectType, projectGroupName, projectDescription,
             majorVersion, minorVersion, useAlternativeWebAgent, useLocalPackages, editorConfigFileTypeId,
             mainProjectName,
-            apiContractsProjectName, spaProjectName, dbContextName, projectShortPrefix, scaffoldSeederProjectName,
-            dbContextProjectName, newDataSeedingClassLibProjectName, programArchiveDateMask, programArchiveExtension,
+            apiContractsProjectName, spaProjectName, dbContextName, programArchiveDateMask, programArchiveExtension,
             parametersFileDateMask, parametersFileExtension, projectFolderName, solutionFileName,
             projectSecurityFolderPath, migrationStartupProjectFilePath, migrationProjectFilePath,
-            dataSeederRulesByTableStartupProjectFilePath, oldDataConvertorForDataSeeder, seedProjectFilePath,
-            seedProjectParametersFilePath, excludesRulesParametersFilePath, appSetEnKeysJsonFileName,
-            migrationSqlFilesFolder, prepareProdCopyDatabaseProjectFilePath,
-            prepareProdCopyDatabaseProjectParametersFilePath, pairedDbObjectsResultFileName, keyGuidPart,
-            EntityVersion.Initial);
+            dataSeederRulesByTableStartupProjectFilePath, oldDataConvertorForDataSeeder, appSetEnKeysJsonFileName,
+            pairedDbObjectsResultFileName, keyGuidPart, EntityVersion.Initial);
         project.ReplaceParts(devDatabaseParameters, prodCopyDatabaseParameters, gitRepos, npmPackages, redundantFiles,
             allowedTools, endpoints, routeClasses, serverInfos);
         return project;
@@ -186,14 +156,11 @@ public sealed class Project : VersionedEntity<ProjectId>
     public void Update(string name, string projectType, string? projectGroupName, string? projectDescription,
         int majorVersion, int minorVersion, bool useAlternativeWebAgent, bool useLocalPackages,
         EditorConfigFileTypeId? editorConfigFileTypeId, string? mainProjectName, string? apiContractsProjectName, string? spaProjectName, string? dbContextName,
-        string? projectShortPrefix, string? scaffoldSeederProjectName, string? dbContextProjectName,
-        string? newDataSeedingClassLibProjectName, string? programArchiveDateMask, string? programArchiveExtension,
+        string? programArchiveDateMask, string? programArchiveExtension,
         string? parametersFileDateMask, string? parametersFileExtension, string? projectFolderName,
         string? solutionFileName, string? projectSecurityFolderPath, string? migrationStartupProjectFilePath,
         string? migrationProjectFilePath, string? dataSeederRulesByTableStartupProjectFilePath,
-        string? oldDataConvertorForDataSeeder, string? seedProjectFilePath, string? seedProjectParametersFilePath,
-        string? excludesRulesParametersFilePath, string? appSetEnKeysJsonFileName, string? migrationSqlFilesFolder,
-        string? prepareProdCopyDatabaseProjectFilePath, string? prepareProdCopyDatabaseProjectParametersFilePath,
+        string? oldDataConvertorForDataSeeder, string? appSetEnKeysJsonFileName,
         string? pairedDbObjectsResultFileName, string? keyGuidPart, DatabaseParameters? devDatabaseParameters,
         DatabaseParameters? prodCopyDatabaseParameters, IEnumerable<ProjectGitRepo> gitRepos,
         IEnumerable<ProjectNpmPackage> npmPackages, IEnumerable<ProjectRedundantFile> redundantFiles,
@@ -213,10 +180,6 @@ public sealed class Project : VersionedEntity<ProjectId>
         ApiContractsProjectName = apiContractsProjectName;
         SpaProjectName = spaProjectName;
         DbContextName = dbContextName;
-        ProjectShortPrefix = projectShortPrefix;
-        ScaffoldSeederProjectName = scaffoldSeederProjectName;
-        DbContextProjectName = dbContextProjectName;
-        NewDataSeedingClassLibProjectName = newDataSeedingClassLibProjectName;
         ProgramArchiveDateMask = programArchiveDateMask;
         ProgramArchiveExtension = programArchiveExtension;
         ParametersFileDateMask = parametersFileDateMask;
@@ -228,13 +191,7 @@ public sealed class Project : VersionedEntity<ProjectId>
         MigrationProjectFilePath = migrationProjectFilePath;
         DataSeederRulesByTableStartupProjectFilePath = dataSeederRulesByTableStartupProjectFilePath;
         OldDataConvertorForDataSeeder = oldDataConvertorForDataSeeder;
-        SeedProjectFilePath = seedProjectFilePath;
-        SeedProjectParametersFilePath = seedProjectParametersFilePath;
-        ExcludesRulesParametersFilePath = excludesRulesParametersFilePath;
         AppSetEnKeysJsonFileName = appSetEnKeysJsonFileName;
-        MigrationSqlFilesFolder = migrationSqlFilesFolder;
-        PrepareProdCopyDatabaseProjectFilePath = prepareProdCopyDatabaseProjectFilePath;
-        PrepareProdCopyDatabaseProjectParametersFilePath = prepareProdCopyDatabaseProjectParametersFilePath;
         PairedDbObjectsResultFileName = pairedDbObjectsResultFileName;
         KeyGuidPart = keyGuidPart;
         ReplaceParts(devDatabaseParameters, prodCopyDatabaseParameters, gitRepos, npmPackages, redundantFiles,
