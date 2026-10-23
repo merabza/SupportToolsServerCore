@@ -22,13 +22,10 @@ public sealed class ProjectTests
         EditorConfigFileTypeId? editorConfigFileTypeId = null)
     {
         return new Project(id, "Name" + s, "Type" + s, "Group" + s, "Description" + s, 3, 7, true, true,
-            editorConfigFileTypeId, "Main" + s, "ApiContracts" + s, "Spa" + s, "DbContext" + s, "Prefix" + s,
-            "ScaffoldSeeder" + s, "DbContextProject" + s, "NewDataSeeding" + s, "ArchiveMask" + s,
+            editorConfigFileTypeId, "Main" + s, "ApiContracts" + s, "Spa" + s, "DbContext" + s, "ArchiveMask" + s,
             "ArchiveExtension" + s, "ParametersMask" + s, "ParametersExtension" + s, "Folder" + s, "Solution" + s,
             "Security" + s, "MigrationStartup" + s, "Migration" + s, "SeederRules" + s, "OldDataConvertor" + s,
-            "Seed" + s, "SeedParameters" + s, "ExcludesRules" + s, "AppSetEnKeys" + s, "MigrationSql" + s,
-            "PrepareProdCopy" + s, "PrepareProdCopyParameters" + s, "PairedDbObjects" + s, "made-up-key" + s,
-            version);
+            "AppSetEnKeys" + s, "PairedDbObjects" + s, "made-up-key" + s, version);
     }
 
     private static void UpdateProject(Project project, string s, DatabaseParameters? dev,
@@ -38,13 +35,11 @@ public sealed class ProjectTests
         IEnumerable<ServerInfo>? serverInfos = null)
     {
         project.Update("Name" + s, "Type" + s, "Group" + s, "Description" + s, 3, 7, true, true, EditorConfigId,
-            "Main" + s, "ApiContracts" + s, "Spa" + s, "DbContext" + s, "Prefix" + s, "ScaffoldSeeder" + s,
-            "DbContextProject" + s, "NewDataSeeding" + s, "ArchiveMask" + s, "ArchiveExtension" + s,
+            "Main" + s, "ApiContracts" + s, "Spa" + s, "DbContext" + s, "ArchiveMask" + s, "ArchiveExtension" + s,
             "ParametersMask" + s, "ParametersExtension" + s, "Folder" + s, "Solution" + s, "Security" + s,
-            "MigrationStartup" + s, "Migration" + s, "SeederRules" + s, "OldDataConvertor" + s, "Seed" + s,
-            "SeedParameters" + s, "ExcludesRules" + s, "AppSetEnKeys" + s, "MigrationSql" + s, "PrepareProdCopy" + s,
-            "PrepareProdCopyParameters" + s, "PairedDbObjects" + s, "made-up-key" + s, dev, prodCopy, gitRepos,
-            npmPackages, redundantFiles, allowedTools, endpoints, routeClasses, serverInfos ?? []);
+            "MigrationStartup" + s, "Migration" + s, "SeederRules" + s, "OldDataConvertor" + s, "AppSetEnKeys" + s,
+            "PairedDbObjects" + s, "made-up-key" + s, dev, prodCopy, gitRepos, npmPackages, redundantFiles,
+            allowedTools, endpoints, routeClasses, serverInfos ?? []);
     }
 
     private static ServerInfo NewServerInfo(int serverSidePort, params string[] toolNames)
@@ -67,10 +62,6 @@ public sealed class ProjectTests
         Assert.Equal("ApiContracts" + s, project.ApiContractsProjectName);
         Assert.Equal("Spa" + s, project.SpaProjectName);
         Assert.Equal("DbContext" + s, project.DbContextName);
-        Assert.Equal("Prefix" + s, project.ProjectShortPrefix);
-        Assert.Equal("ScaffoldSeeder" + s, project.ScaffoldSeederProjectName);
-        Assert.Equal("DbContextProject" + s, project.DbContextProjectName);
-        Assert.Equal("NewDataSeeding" + s, project.NewDataSeedingClassLibProjectName);
         Assert.Equal("ArchiveMask" + s, project.ProgramArchiveDateMask);
         Assert.Equal("ArchiveExtension" + s, project.ProgramArchiveExtension);
         Assert.Equal("ParametersMask" + s, project.ParametersFileDateMask);
@@ -82,13 +73,7 @@ public sealed class ProjectTests
         Assert.Equal("Migration" + s, project.MigrationProjectFilePath);
         Assert.Equal("SeederRules" + s, project.DataSeederRulesByTableStartupProjectFilePath);
         Assert.Equal("OldDataConvertor" + s, project.OldDataConvertorForDataSeeder);
-        Assert.Equal("Seed" + s, project.SeedProjectFilePath);
-        Assert.Equal("SeedParameters" + s, project.SeedProjectParametersFilePath);
-        Assert.Equal("ExcludesRules" + s, project.ExcludesRulesParametersFilePath);
         Assert.Equal("AppSetEnKeys" + s, project.AppSetEnKeysJsonFileName);
-        Assert.Equal("MigrationSql" + s, project.MigrationSqlFilesFolder);
-        Assert.Equal("PrepareProdCopy" + s, project.PrepareProdCopyDatabaseProjectFilePath);
-        Assert.Equal("PrepareProdCopyParameters" + s, project.PrepareProdCopyDatabaseProjectParametersFilePath);
         Assert.Equal("PairedDbObjects" + s, project.PairedDbObjectsResultFileName);
         Assert.Equal("made-up-key" + s, project.KeyGuidPart);
     }
@@ -127,7 +112,7 @@ public sealed class ProjectTests
     public void Create_ReturnsANewProjectWithItsPartsAUniqueIdAndTheFirstVersion()
     {
         DatabaseParameters dev = NewDatabaseParameters("AppDev");
-        ProjectGitRepo gitRepo = ProjectGitRepo.Create(GitRepoId.CreateUnique(), EProjectGitRepoKind.Main);
+        ProjectGitRepo gitRepo = ProjectGitRepo.Create(GitRepoId.CreateUnique());
         ProjectNpmPackage npmPackage = ProjectNpmPackage.Create(NpmPackageId.CreateUnique());
         ProjectRedundantFile redundantFile = ProjectRedundantFile.Create("*.pdb");
         ProjectAllowedTool allowedTool = ProjectAllowedTool.Create("SeedData");
@@ -137,12 +122,11 @@ public sealed class ProjectTests
         ServerInfo serverInfo = NewServerInfo(5022, "ProgramUpdater");
 
         Project first = Project.Create("App", "IsService", null, null, 1, 0, false, false, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, @"D:\1WorkDotnet\App", null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, dev, null, [gitRepo], [npmPackage],
-            [redundantFile], [allowedTool], [endpoint], [routeClass], [serverInfo]);
+            null, null, null, null, @"D:\1WorkDotnet\App", null, null, null, null, null, null, null, null, null, dev,
+            null, [gitRepo], [npmPackage], [redundantFile], [allowedTool], [endpoint], [routeClass], [serverInfo]);
         Project second = Project.Create("App", "IsService", null, null, 1, 0, false, false, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, [], [], [], [], [], [], []);
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, [], [], [],
+            [], [], [], []);
 
         Assert.NotEqual(first.Id, second.Id);
         Assert.Equal("App", first.Name);
@@ -174,14 +158,14 @@ public sealed class ProjectTests
         var id = ProjectId.CreateUnique();
         Project project = NewProject(id, "1", 2);
         UpdateProject(project, "1", NewDatabaseParameters("Old"), null,
-            [ProjectGitRepo.Create(GitRepoId.CreateUnique(), EProjectGitRepoKind.Main)],
+            [ProjectGitRepo.Create(GitRepoId.CreateUnique())],
             [ProjectNpmPackage.Create(NpmPackageId.CreateUnique())], [ProjectRedundantFile.Create("*.pdb")],
             [ProjectAllowedTool.Create("SeedData")],
             [ProjectEndpoint.Create("Old", null, null, false, "Get", "Query", null, false)],
             [ProjectRouteClass.Create("Old", "api", "v1", "/old")], [NewServerInfo(5022), NewServerInfo(5023)]);
         DatabaseParameters dev = NewDatabaseParameters("AppDev");
         DatabaseParameters prodCopy = NewDatabaseParameters("AppProdCopy");
-        ProjectGitRepo gitRepo = ProjectGitRepo.Create(GitRepoId.CreateUnique(), EProjectGitRepoKind.ScaffoldSeed);
+        ProjectGitRepo gitRepo = ProjectGitRepo.Create(GitRepoId.CreateUnique());
         ProjectNpmPackage npmPackage = ProjectNpmPackage.Create(NpmPackageId.CreateUnique());
         ProjectRedundantFile redundantFile = ProjectRedundantFile.Create("*.xml");
         ProjectAllowedTool allowedTool = ProjectAllowedTool.Create("GenerateApiRoutes");
@@ -259,8 +243,8 @@ public sealed class ProjectTests
         Project project = NewProject(ProjectId.CreateUnique(), "1", 1);
         UpdateProject(project, "1", null, null,
             [
-                ProjectGitRepo.Create(GitRepoId.CreateUnique(), EProjectGitRepoKind.Main),
-                ProjectGitRepo.Create(GitRepoId.CreateUnique(), EProjectGitRepoKind.ScaffoldSeed)
+                ProjectGitRepo.Create(GitRepoId.CreateUnique()),
+                ProjectGitRepo.Create(GitRepoId.CreateUnique())
             ], [ProjectNpmPackage.Create(NpmPackageId.CreateUnique())], [ProjectRedundantFile.Create("*.pdb")],
             [ProjectAllowedTool.Create("SeedData")],
             [ProjectEndpoint.Create("Get", null, null, false, "Get", "Query", null, false)],
@@ -295,9 +279,8 @@ public sealed class ProjectTests
         List<ServerInfo> serverInfos = [NewServerInfo(5022)];
 
         Project project = Project.Create("App", "Standard", null, null, 1, 0, false, false, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null, null, [], [], redundantFiles, allowedTools, [], [],
-            serverInfos);
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, [], [],
+            redundantFiles, allowedTools, [], [], serverInfos);
         redundantFiles.Add(ProjectRedundantFile.Create("*.xml"));
         allowedTools.Add(ProjectAllowedTool.Create("GenerateApiRoutes"));
         serverInfos.Add(NewServerInfo(5023));
@@ -349,7 +332,7 @@ public sealed class ProjectTests
         NpmPackageId npmPackageId = NpmPackageId.CreateUnique();
         var gitRepoChildId = ProjectGitRepoId.CreateUnique();
 
-        var gitRepo = new ProjectGitRepo(gitRepoChildId, gitRepoId, EProjectGitRepoKind.ScaffoldSeed);
+        var gitRepo = new ProjectGitRepo(gitRepoChildId, gitRepoId);
         ProjectNpmPackage npmPackage = ProjectNpmPackage.Create(npmPackageId);
         ProjectRedundantFile redundantFile = ProjectRedundantFile.Create("*.pdb");
         ProjectAllowedTool allowedTool = ProjectAllowedTool.Create("SeedData");
@@ -359,7 +342,6 @@ public sealed class ProjectTests
 
         Assert.Equal(gitRepoChildId, gitRepo.Id);
         Assert.Equal(gitRepoId, gitRepo.GitRepoId);
-        Assert.Equal(EProjectGitRepoKind.ScaffoldSeed, gitRepo.Kind);
         Assert.Equal(npmPackageId, npmPackage.NpmPackageId);
         Assert.Equal("*.pdb", redundantFile.FileName);
         Assert.Equal("SeedData", allowedTool.ToolName);
@@ -375,8 +357,7 @@ public sealed class ProjectTests
         Assert.Equal("api", routeClass.Root);
         Assert.Equal("v1", routeClass.ApiVersion);
         Assert.Equal("/git", routeClass.Base);
-        Assert.NotEqual(ProjectGitRepo.Create(gitRepoId, EProjectGitRepoKind.Main).Id,
-            ProjectGitRepo.Create(gitRepoId, EProjectGitRepoKind.Main).Id);
+        Assert.NotEqual(ProjectGitRepo.Create(gitRepoId).Id, ProjectGitRepo.Create(gitRepoId).Id);
         Assert.NotEqual(ProjectNpmPackage.Create(npmPackageId).Id, ProjectNpmPackage.Create(npmPackageId).Id);
         Assert.NotEqual(ProjectRedundantFile.Create("a").Id, ProjectRedundantFile.Create("a").Id);
         Assert.NotEqual(ProjectAllowedTool.Create("a").Id, ProjectAllowedTool.Create("a").Id);

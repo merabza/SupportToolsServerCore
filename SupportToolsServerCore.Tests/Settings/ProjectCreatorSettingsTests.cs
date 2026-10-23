@@ -21,12 +21,11 @@ public sealed class ProjectCreatorSettingsTests
         FileStorageId fileStorageId = FileStorageId.CreateUnique();
         SmartSchemaId smartSchemaId = SmartSchemaId.CreateUnique();
 
-        var projectCreatorSettings = new ProjectCreatorSettings(id, 4, "FakeHost", @"D:\1WorkDotnet",
-            @"D:\1WorkSecurity", serverId, environmentId, connectionId, fileStorageId, smartSchemaId, 5);
+        var projectCreatorSettings = new ProjectCreatorSettings(id, 4, @"D:\1WorkDotnet", @"D:\1WorkSecurity",
+            serverId, environmentId, connectionId, fileStorageId, smartSchemaId, 5);
 
         Assert.Equal(id, projectCreatorSettings.Id);
         Assert.Equal(4, projectCreatorSettings.IndentSize);
-        Assert.Equal("FakeHost", projectCreatorSettings.FakeHostProjectName);
         Assert.Equal(@"D:\1WorkDotnet", projectCreatorSettings.ProjectsFolderPathReal);
         Assert.Equal(@"D:\1WorkSecurity", projectCreatorSettings.SecretsFolderPathReal);
         Assert.Equal(serverId, projectCreatorSettings.ProductionServerId);
@@ -47,15 +46,13 @@ public sealed class ProjectCreatorSettingsTests
         FileStorageId fileStorageId = FileStorageId.CreateUnique();
         SmartSchemaId smartSchemaId = SmartSchemaId.CreateUnique();
 
-        ProjectCreatorSettings first = ProjectCreatorSettings.Create(4, "FakeHost", @"D:\1WorkDotnet",
-            @"D:\1WorkSecurity", serverId, environmentId, connectionId, fileStorageId, smartSchemaId);
-        ProjectCreatorSettings second =
-            ProjectCreatorSettings.Create(0, null, null, null, null, null, null, null, null);
+        ProjectCreatorSettings first = ProjectCreatorSettings.Create(4, @"D:\1WorkDotnet", @"D:\1WorkSecurity",
+            serverId, environmentId, connectionId, fileStorageId, smartSchemaId);
+        ProjectCreatorSettings second = ProjectCreatorSettings.Create(0, null, null, null, null, null, null, null);
 
         Assert.Equal(ProjectCreatorSettingsId.Singleton, first.Id);
         Assert.Equal(first.Id, second.Id);
         Assert.Equal(4, first.IndentSize);
-        Assert.Equal("FakeHost", first.FakeHostProjectName);
         Assert.Equal(@"D:\1WorkDotnet", first.ProjectsFolderPathReal);
         Assert.Equal(@"D:\1WorkSecurity", first.SecretsFolderPathReal);
         Assert.Equal(serverId, first.ProductionServerId);
@@ -66,7 +63,7 @@ public sealed class ProjectCreatorSettingsTests
         Assert.Equal(1, first.Version);
         Assert.Empty(first.DomainEvents);
         Assert.Equal(0, second.IndentSize);
-        Assert.Null(second.FakeHostProjectName);
+        Assert.Null(second.ProjectsFolderPathReal);
         Assert.Null(second.ProductionServerId);
         Assert.Null(second.UseSmartSchemaId);
     }
@@ -75,19 +72,18 @@ public sealed class ProjectCreatorSettingsTests
     public void Update_ReplacesTheValuesKeepingTheIdAndIncrementsTheVersion()
     {
         var projectCreatorSettings = new ProjectCreatorSettings(ProjectCreatorSettingsId.Singleton, 2, null, null,
-            null, null, null, null, null, null, 2);
+            null, null, null, null, null, 2);
         ServerId serverId = ServerId.CreateUnique();
         DeploymentEnvironmentId environmentId = DeploymentEnvironmentId.CreateUnique();
         DatabaseServerConnectionId connectionId = DatabaseServerConnectionId.CreateUnique();
         FileStorageId fileStorageId = FileStorageId.CreateUnique();
         SmartSchemaId smartSchemaId = SmartSchemaId.CreateUnique();
 
-        projectCreatorSettings.Update(4, "FakeHost", @"D:\1WorkDotnet", @"D:\1WorkSecurity", serverId, environmentId,
+        projectCreatorSettings.Update(4, @"D:\1WorkDotnet", @"D:\1WorkSecurity", serverId, environmentId,
             connectionId, fileStorageId, smartSchemaId);
 
         Assert.Equal(ProjectCreatorSettingsId.Singleton, projectCreatorSettings.Id);
         Assert.Equal(4, projectCreatorSettings.IndentSize);
-        Assert.Equal("FakeHost", projectCreatorSettings.FakeHostProjectName);
         Assert.Equal(@"D:\1WorkDotnet", projectCreatorSettings.ProjectsFolderPathReal);
         Assert.Equal(@"D:\1WorkSecurity", projectCreatorSettings.SecretsFolderPathReal);
         Assert.Equal(serverId, projectCreatorSettings.ProductionServerId);
@@ -97,9 +93,8 @@ public sealed class ProjectCreatorSettingsTests
         Assert.Equal(smartSchemaId, projectCreatorSettings.UseSmartSchemaId);
         Assert.Equal(3, projectCreatorSettings.Version);
 
-        projectCreatorSettings.Update(0, null, null, null, null, null, null, null, null);
+        projectCreatorSettings.Update(0, null, null, null, null, null, null, null);
         Assert.Equal(0, projectCreatorSettings.IndentSize);
-        Assert.Null(projectCreatorSettings.FakeHostProjectName);
         Assert.Null(projectCreatorSettings.ProjectsFolderPathReal);
         Assert.Null(projectCreatorSettings.SecretsFolderPathReal);
         Assert.Null(projectCreatorSettings.ProductionServerId);

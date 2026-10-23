@@ -14,19 +14,16 @@ namespace SupportToolsServerCore.Domain.Settings;
 //DatabaseExchangeFileStorageId და UseSmartSchemaId სხვა აგრეგატების ჩანაწერებია (კონტრაქტში სახელებით)
 public sealed class ProjectCreatorSettings : VersionedEntity<ProjectCreatorSettingsId>
 {
-    public const int FakeHostProjectNameMaxLength = 100;
-
     //Windows-ის MAX_PATH
     public const int ProjectsFolderPathRealMaxLength = 260;
     public const int SecretsFolderPathRealMaxLength = 260;
 
-    public ProjectCreatorSettings(ProjectCreatorSettingsId id, int indentSize, string? fakeHostProjectName,
-        string? projectsFolderPathReal, string? secretsFolderPathReal, ServerId? productionServerId,
-        DeploymentEnvironmentId? productionEnvironmentId, DatabaseServerConnectionId? developerDbConnectionId,
-        FileStorageId? databaseExchangeFileStorageId, SmartSchemaId? useSmartSchemaId, int version) : base(id, version)
+    public ProjectCreatorSettings(ProjectCreatorSettingsId id, int indentSize, string? projectsFolderPathReal,
+        string? secretsFolderPathReal, ServerId? productionServerId, DeploymentEnvironmentId? productionEnvironmentId,
+        DatabaseServerConnectionId? developerDbConnectionId, FileStorageId? databaseExchangeFileStorageId,
+        SmartSchemaId? useSmartSchemaId, int version) : base(id, version)
     {
         IndentSize = indentSize;
-        FakeHostProjectName = fakeHostProjectName;
         ProjectsFolderPathReal = projectsFolderPathReal;
         SecretsFolderPathReal = secretsFolderPathReal;
         ProductionServerId = productionServerId;
@@ -39,7 +36,6 @@ public sealed class ProjectCreatorSettings : VersionedEntity<ProjectCreatorSetti
     //გენერირებული კოდის შეწევის ზომა
     public int IndentSize { get; private set; }
 
-    public string? FakeHostProjectName { get; private set; }
     public string? ProjectsFolderPathReal { get; private set; }
     public string? SecretsFolderPathReal { get; private set; }
     public ServerId? ProductionServerId { get; private set; }
@@ -50,24 +46,23 @@ public sealed class ProjectCreatorSettings : VersionedEntity<ProjectCreatorSetti
     //კლიენტის UseSmartSchema: სახელის მიუხედავად, ჭკვიანი სქემის მითითებაა
     public SmartSchemaId? UseSmartSchemaId { get; private set; }
 
-    public static ProjectCreatorSettings Create(int indentSize, string? fakeHostProjectName,
-        string? projectsFolderPathReal, string? secretsFolderPathReal, ServerId? productionServerId,
-        DeploymentEnvironmentId? productionEnvironmentId, DatabaseServerConnectionId? developerDbConnectionId,
-        FileStorageId? databaseExchangeFileStorageId, SmartSchemaId? useSmartSchemaId)
-    {
-        return new ProjectCreatorSettings(ProjectCreatorSettingsId.Singleton, indentSize, fakeHostProjectName,
-            projectsFolderPathReal, secretsFolderPathReal, productionServerId, productionEnvironmentId,
-            developerDbConnectionId, databaseExchangeFileStorageId, useSmartSchemaId, EntityVersion.Initial);
-    }
-
-    //რედაქტირება მთელ ჩანაწერს ანაცვლებს და ვერსიას ზრდის
-    public void Update(int indentSize, string? fakeHostProjectName, string? projectsFolderPathReal,
+    public static ProjectCreatorSettings Create(int indentSize, string? projectsFolderPathReal,
         string? secretsFolderPathReal, ServerId? productionServerId, DeploymentEnvironmentId? productionEnvironmentId,
         DatabaseServerConnectionId? developerDbConnectionId, FileStorageId? databaseExchangeFileStorageId,
         SmartSchemaId? useSmartSchemaId)
     {
+        return new ProjectCreatorSettings(ProjectCreatorSettingsId.Singleton, indentSize, projectsFolderPathReal,
+            secretsFolderPathReal, productionServerId, productionEnvironmentId, developerDbConnectionId,
+            databaseExchangeFileStorageId, useSmartSchemaId, EntityVersion.Initial);
+    }
+
+    //რედაქტირება მთელ ჩანაწერს ანაცვლებს და ვერსიას ზრდის
+    public void Update(int indentSize, string? projectsFolderPathReal, string? secretsFolderPathReal,
+        ServerId? productionServerId, DeploymentEnvironmentId? productionEnvironmentId,
+        DatabaseServerConnectionId? developerDbConnectionId, FileStorageId? databaseExchangeFileStorageId,
+        SmartSchemaId? useSmartSchemaId)
+    {
         IndentSize = indentSize;
-        FakeHostProjectName = fakeHostProjectName;
         ProjectsFolderPathReal = projectsFolderPathReal;
         SecretsFolderPathReal = secretsFolderPathReal;
         ProductionServerId = productionServerId;
