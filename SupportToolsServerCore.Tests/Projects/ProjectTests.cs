@@ -45,7 +45,8 @@ public sealed class ProjectTests
     private static ServerInfo NewServerInfo(int serverSidePort, params string[] toolNames)
     {
         return ServerInfo.Create(ServerId.CreateUnique(), DeploymentEnvironmentId.CreateUnique(), null,
-            serverSidePort, "v1", null, null, "merab", null, null, toolNames.Select(ServerInfoAllowedTool.Create));
+            serverSidePort, "v1", null, null, "merab", false, null, null,
+            toolNames.Select(ServerInfoAllowedTool.Create));
     }
 
     private static void AssertFields(Project project, string s)

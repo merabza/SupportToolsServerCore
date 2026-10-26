@@ -11,7 +11,8 @@ namespace SupportToolsServerCore.Domain.Projects;
 //და გარემო, რომლებიც პროექტში ერთად ერთხელ გვხვდება. ServerId, EnvironmentId და WebAgentForCheckId სხვა აგრეგატების
 //ჩანაწერებია (კონტრაქტში სახელებით). ServerSidePort 0 ნიშნავს, რომ პორტი არ არის. AppSettings-ის ფაილები კანონიკური
 //გზებია (README G3): სერვერი მათ ინახავს ისე, როგორც მოვიდა. ServiceUserName სერვისის OS ანგარიშია და საიდუმლო არ არის.
-//ბაზის პარამეტრები პროექტის ბაზის პარამეტრების ტიპისაა (owned, ServerInfo-ს სტრიქონში). აგრეგატის შვილია, ამიტომ
+//OpenPort-ის ჩართვისას კლიენტის ინსტალაცია და საინსტალაციო სკრიპტი სერვისის Kestrel-ის პორტებს სერვერის firewall-ში
+//ხსნის; სერვერი მას მხოლოდ ინახავს. ბაზის პარამეტრები პროექტის ბაზის პარამეტრების ტიპისაა (owned, ServerInfo-ს სტრიქონში). აგრეგატის შვილია, ამიტომ
 //საკუთარი ვერსია არ აქვს (README G7): მისი ნებისმიერი ცვლილება პროექტის ვერსიას ზრდის
 public sealed class ServerInfo : Entity<ServerInfoId>
 {
@@ -29,8 +30,8 @@ public sealed class ServerInfo : Entity<ServerInfoId>
     //ბაზის პარამეტრებსა და ინსტრუმენტებს EF კონსტრუქტორით ვერ გადასცემს და ჩანაწერის წაკითხვისას თვითონ ავსებს
     public ServerInfo(ServerInfoId id, ServerId serverId, DeploymentEnvironmentId environmentId,
         ApiClientId? webAgentForCheckId, int serverSidePort, string? apiVersionId,
-        string? appSettingsJsonSourceFileName, string? appSettingsEncodedJsonFileName, string? serviceUserName) :
-        base(id)
+        string? appSettingsJsonSourceFileName, string? appSettingsEncodedJsonFileName, string? serviceUserName,
+        bool openPort) : base(id)
     {
         ServerId = serverId;
         EnvironmentId = environmentId;
@@ -40,6 +41,7 @@ public sealed class ServerInfo : Entity<ServerInfoId>
         AppSettingsJsonSourceFileName = appSettingsJsonSourceFileName;
         AppSettingsEncodedJsonFileName = appSettingsEncodedJsonFileName;
         ServiceUserName = serviceUserName;
+        OpenPort = openPort;
     }
 
     public ServerId ServerId { get; private set; }
@@ -53,6 +55,7 @@ public sealed class ServerInfo : Entity<ServerInfoId>
     public string? AppSettingsJsonSourceFileName { get; private set; }
     public string? AppSettingsEncodedJsonFileName { get; private set; }
     public string? ServiceUserName { get; private set; }
+    public bool OpenPort { get; private set; }
     public DatabaseParameters? CurrentDatabaseParameters { get; private set; }
     public DatabaseParameters? NewDatabaseParameters { get; private set; }
     public IReadOnlyList<ServerInfoAllowedTool> AllowedTools => _allowedTools;
@@ -61,12 +64,12 @@ public sealed class ServerInfo : Entity<ServerInfoId>
     public static ServerInfo Create(ServerId serverId, DeploymentEnvironmentId environmentId,
         ApiClientId? webAgentForCheckId, int serverSidePort, string? apiVersionId,
         string? appSettingsJsonSourceFileName, string? appSettingsEncodedJsonFileName, string? serviceUserName,
-        DatabaseParameters? currentDatabaseParameters, DatabaseParameters? newDatabaseParameters,
+        bool openPort, DatabaseParameters? currentDatabaseParameters, DatabaseParameters? newDatabaseParameters,
         IEnumerable<ServerInfoAllowedTool> allowedTools)
     {
         var serverInfo = new ServerInfo(ServerInfoId.CreateUnique(), serverId, environmentId, webAgentForCheckId,
             serverSidePort, apiVersionId, appSettingsJsonSourceFileName, appSettingsEncodedJsonFileName,
-            serviceUserName)
+            serviceUserName, openPort)
         {
             CurrentDatabaseParameters = currentDatabaseParameters, NewDatabaseParameters = newDatabaseParameters
         };

@@ -26,7 +26,7 @@ public sealed class ServerInfoTests
 
         var serverInfo = new ServerInfo(id, serverId, environmentId, webAgentId, 5022, "v1",
             @"D:\1WorkSecurity\App\PAZISI\appsettings.json", @"D:\1WorkSecurity\App\PAZISI\appsettingsEncoded.json",
-            "merab");
+            "merab", true);
 
         Assert.Equal(id, serverInfo.Id);
         Assert.Equal(serverId, serverInfo.ServerId);
@@ -38,6 +38,7 @@ public sealed class ServerInfoTests
         Assert.Equal(@"D:\1WorkSecurity\App\PAZISI\appsettingsEncoded.json",
             serverInfo.AppSettingsEncodedJsonFileName);
         Assert.Equal("merab", serverInfo.ServiceUserName);
+        Assert.True(serverInfo.OpenPort);
         Assert.Null(serverInfo.CurrentDatabaseParameters);
         Assert.Null(serverInfo.NewDatabaseParameters);
         Assert.Empty(serverInfo.AllowedTools);
@@ -53,10 +54,10 @@ public sealed class ServerInfoTests
         DatabaseParameters next = NewDatabaseParameters("AppNew");
         ServerInfoAllowedTool tool = ServerInfoAllowedTool.Create("ProgramUpdater");
 
-        ServerInfo first = ServerInfo.Create(serverId, environmentId, null, 0, null, null, null, null, current, next,
-            [tool]);
-        ServerInfo second = ServerInfo.Create(serverId, environmentId, null, 0, null, null, null, null, null, null,
-            []);
+        ServerInfo first = ServerInfo.Create(serverId, environmentId, null, 0, null, null, null, null, true, current,
+            next, [tool]);
+        ServerInfo second = ServerInfo.Create(serverId, environmentId, null, 0, null, null, null, null, false, null,
+            null, []);
 
         Assert.NotEqual(first.Id, second.Id);
         Assert.Equal(serverId, first.ServerId);
@@ -67,6 +68,8 @@ public sealed class ServerInfoTests
         Assert.Null(first.AppSettingsJsonSourceFileName);
         Assert.Null(first.AppSettingsEncodedJsonFileName);
         Assert.Null(first.ServiceUserName);
+        Assert.True(first.OpenPort);
+        Assert.False(second.OpenPort);
         Assert.Same(current, first.CurrentDatabaseParameters);
         Assert.Same(next, first.NewDatabaseParameters);
         Assert.Equal([tool], first.AllowedTools);
@@ -83,7 +86,7 @@ public sealed class ServerInfoTests
         List<ServerInfoAllowedTool> tools = [ServerInfoAllowedTool.Create("ServiceStarter")];
 
         ServerInfo serverInfo = ServerInfo.Create(ServerId.CreateUnique(), DeploymentEnvironmentId.CreateUnique(),
-            null, 0, null, null, null, null, null, null, tools);
+            null, 0, null, null, null, null, false, null, null, tools);
         tools.Add(ServerInfoAllowedTool.Create("ServiceStopper"));
 
         Assert.Equal(["ServiceStarter"], serverInfo.AllowedTools.Select(x => x.ToolName));
