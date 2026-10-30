@@ -39,7 +39,8 @@ public sealed class Project : VersionedEntity<ProjectId>
     //ბაზის პარამეტრებსა და შვილ კოლექციებს EF კონსტრუქტორით ვერ გადასცემს და ჩანაწერის წაკითხვისას თვითონ ავსებს
     public Project(ProjectId id, string name, string projectType, string? projectGroupName,
         string? projectDescription, int majorVersion, int minorVersion, bool useAlternativeWebAgent,
-        bool useLocalPackages, EditorConfigFileTypeId? editorConfigFileTypeId, string? mainProjectName,
+        bool useLocalPackages, bool usesDatabase, EditorConfigFileTypeId? editorConfigFileTypeId,
+        string? mainProjectName,
         string? apiContractsProjectName,
         string? spaProjectName, string? dbContextName, string? programArchiveDateMask,
         string? programArchiveExtension, string? parametersFileDateMask, string? parametersFileExtension,
@@ -57,6 +58,7 @@ public sealed class Project : VersionedEntity<ProjectId>
         MinorVersion = minorVersion;
         UseAlternativeWebAgent = useAlternativeWebAgent;
         UseLocalPackages = useLocalPackages;
+        UsesDatabase = usesDatabase;
         EditorConfigFileTypeId = editorConfigFileTypeId;
         MainProjectName = mainProjectName;
         ApiContractsProjectName = apiContractsProjectName;
@@ -89,6 +91,9 @@ public sealed class Project : VersionedEntity<ProjectId>
     //პროექტი ლოკალურ (საკუთარ) პაკეტებს იყენებს: კლიენტის Distribute all packages და Reverse Package Distribution
     //მხოლოდ ასეთ პროექტებს ეხება
     public bool UseLocalPackages { get; private set; }
+
+    //პროექტი მონაცემთა ბაზას იყენებს: გამორთულისას კლიენტი ბაზასთან დაკავშირებულ პარამეტრებსა და ინსტრუმენტებს მალავს
+    public bool UsesDatabase { get; private set; }
 
     //.editorconfig შაბლონი. null ნიშნავს, რომ პროექტის .editorconfig ფაილი არ მოწმდება
     public EditorConfigFileTypeId? EditorConfigFileTypeId { get; private set; }
@@ -123,7 +128,8 @@ public sealed class Project : VersionedEntity<ProjectId>
 
     public static Project Create(string name, string projectType, string? projectGroupName,
         string? projectDescription, int majorVersion, int minorVersion, bool useAlternativeWebAgent,
-        bool useLocalPackages, EditorConfigFileTypeId? editorConfigFileTypeId, string? mainProjectName,
+        bool useLocalPackages, bool usesDatabase, EditorConfigFileTypeId? editorConfigFileTypeId,
+        string? mainProjectName,
         string? apiContractsProjectName,
         string? spaProjectName, string? dbContextName, string? programArchiveDateMask,
         string? programArchiveExtension, string? parametersFileDateMask, string? parametersFileExtension,
@@ -138,7 +144,7 @@ public sealed class Project : VersionedEntity<ProjectId>
         IEnumerable<ProjectRouteClass> routeClasses, IEnumerable<ServerInfo> serverInfos)
     {
         var project = new Project(ProjectId.CreateUnique(), name, projectType, projectGroupName, projectDescription,
-            majorVersion, minorVersion, useAlternativeWebAgent, useLocalPackages, editorConfigFileTypeId,
+            majorVersion, minorVersion, useAlternativeWebAgent, useLocalPackages, usesDatabase, editorConfigFileTypeId,
             mainProjectName,
             apiContractsProjectName, spaProjectName, dbContextName, programArchiveDateMask, programArchiveExtension,
             parametersFileDateMask, parametersFileExtension, projectFolderName, solutionFileName,
@@ -154,7 +160,7 @@ public sealed class Project : VersionedEntity<ProjectId>
     //ახლით იცვლება და ვერსია ნებისმიერ ცვლილებაზე იზრდება, მათ შორის მაშინაც, როცა მხოლოდ შვილი შეიცვალა. სახელის
     //შეცვლა (მაგალითად, მხოლოდ რეგისტრის) იგივე ჩანაწერის განახლებაა
     public void Update(string name, string projectType, string? projectGroupName, string? projectDescription,
-        int majorVersion, int minorVersion, bool useAlternativeWebAgent, bool useLocalPackages,
+        int majorVersion, int minorVersion, bool useAlternativeWebAgent, bool useLocalPackages, bool usesDatabase,
         EditorConfigFileTypeId? editorConfigFileTypeId, string? mainProjectName, string? apiContractsProjectName, string? spaProjectName, string? dbContextName,
         string? programArchiveDateMask, string? programArchiveExtension,
         string? parametersFileDateMask, string? parametersFileExtension, string? projectFolderName,
@@ -175,6 +181,7 @@ public sealed class Project : VersionedEntity<ProjectId>
         MinorVersion = minorVersion;
         UseAlternativeWebAgent = useAlternativeWebAgent;
         UseLocalPackages = useLocalPackages;
+        UsesDatabase = usesDatabase;
         EditorConfigFileTypeId = editorConfigFileTypeId;
         MainProjectName = mainProjectName;
         ApiContractsProjectName = apiContractsProjectName;
