@@ -12,7 +12,9 @@ namespace SupportToolsServerCore.Domain.Projects;
 //ჩანაწერებია (კონტრაქტში სახელებით). ServerSidePort 0 ნიშნავს, რომ პორტი არ არის. AppSettings-ის ფაილები კანონიკური
 //გზებია (README G3): სერვერი მათ ინახავს ისე, როგორც მოვიდა. ServiceUserName სერვისის OS ანგარიშია და საიდუმლო არ არის.
 //OpenPort-ის ჩართვისას კლიენტის ინსტალაცია და საინსტალაციო სკრიპტი სერვისის Kestrel-ის პორტებს სერვერის firewall-ში
-//ხსნის; სერვერი მას მხოლოდ ინახავს. ბაზის პარამეტრები პროექტის ბაზის პარამეტრების ტიპისაა (owned, ServerInfo-ს სტრიქონში). აგრეგატის შვილია, ამიტომ
+//ხსნის; სერვერი მას მხოლოდ ინახავს. SpaEnvMode Vite-ის mode-ია, რომლითაც კლიენტი პროექტის ამ სერვერზე
+//გამოქვეყნებისას React ფრონტს აბილდებს (null — csproj-ის ნაგულისხმევი production); სერვერი მასაც მხოლოდ ინახავს.
+//ბაზის პარამეტრები პროექტის ბაზის პარამეტრების ტიპისაა (owned, ServerInfo-ს სტრიქონში). აგრეგატის შვილია, ამიტომ
 //საკუთარი ვერსია არ აქვს (README G7): მისი ნებისმიერი ცვლილება პროექტის ვერსიას ზრდის
 public sealed class ServerInfo : Entity<ServerInfoId>
 {
@@ -25,13 +27,16 @@ public sealed class ServerInfo : Entity<ServerInfoId>
     //OS-ის ანგარიში, სერვერის FilesUserName-ის მსგავსად
     public const int ServiceUserNameMaxLength = 128;
 
+    //Vite-ის mode-ის სახელი (production, staging)
+    public const int SpaEnvModeMaxLength = 50;
+
     private readonly List<ServerInfoAllowedTool> _allowedTools = [];
 
     //ბაზის პარამეტრებსა და ინსტრუმენტებს EF კონსტრუქტორით ვერ გადასცემს და ჩანაწერის წაკითხვისას თვითონ ავსებს
     public ServerInfo(ServerInfoId id, ServerId serverId, DeploymentEnvironmentId environmentId,
         ApiClientId? webAgentForCheckId, int serverSidePort, string? apiVersionId,
         string? appSettingsJsonSourceFileName, string? appSettingsEncodedJsonFileName, string? serviceUserName,
-        bool openPort) : base(id)
+        bool openPort, string? spaEnvMode) : base(id)
     {
         ServerId = serverId;
         EnvironmentId = environmentId;
@@ -42,6 +47,7 @@ public sealed class ServerInfo : Entity<ServerInfoId>
         AppSettingsEncodedJsonFileName = appSettingsEncodedJsonFileName;
         ServiceUserName = serviceUserName;
         OpenPort = openPort;
+        SpaEnvMode = spaEnvMode;
     }
 
     public ServerId ServerId { get; private set; }
@@ -56,6 +62,7 @@ public sealed class ServerInfo : Entity<ServerInfoId>
     public string? AppSettingsEncodedJsonFileName { get; private set; }
     public string? ServiceUserName { get; private set; }
     public bool OpenPort { get; private set; }
+    public string? SpaEnvMode { get; private set; }
     public DatabaseParameters? CurrentDatabaseParameters { get; private set; }
     public DatabaseParameters? NewDatabaseParameters { get; private set; }
     public IReadOnlyList<ServerInfoAllowedTool> AllowedTools => _allowedTools;
@@ -64,12 +71,12 @@ public sealed class ServerInfo : Entity<ServerInfoId>
     public static ServerInfo Create(ServerId serverId, DeploymentEnvironmentId environmentId,
         ApiClientId? webAgentForCheckId, int serverSidePort, string? apiVersionId,
         string? appSettingsJsonSourceFileName, string? appSettingsEncodedJsonFileName, string? serviceUserName,
-        bool openPort, DatabaseParameters? currentDatabaseParameters, DatabaseParameters? newDatabaseParameters,
-        IEnumerable<ServerInfoAllowedTool> allowedTools)
+        bool openPort, string? spaEnvMode, DatabaseParameters? currentDatabaseParameters,
+        DatabaseParameters? newDatabaseParameters, IEnumerable<ServerInfoAllowedTool> allowedTools)
     {
         var serverInfo = new ServerInfo(ServerInfoId.CreateUnique(), serverId, environmentId, webAgentForCheckId,
             serverSidePort, apiVersionId, appSettingsJsonSourceFileName, appSettingsEncodedJsonFileName,
-            serviceUserName, openPort)
+            serviceUserName, openPort, spaEnvMode)
         {
             CurrentDatabaseParameters = currentDatabaseParameters, NewDatabaseParameters = newDatabaseParameters
         };
