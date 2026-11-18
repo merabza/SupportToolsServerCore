@@ -7,7 +7,8 @@ namespace SupportToolsServerCore.Domain.DatabaseServerConnections;
 //მონაცემთა ბაზის სერვერთან კავშირი, SupportToolsParameters.DatabaseServerConnections-ის ჩანაწერი.
 //DatabaseServerProvider კლიენტის EDatabaseProvider-ის სახელია; სერვერი enum-ს არ იცნობს და მხოლოდ სიგრძეს ამოწმებს.
 //DbWebAgentId ბაზასთან დამაკავშირებელი ვებაგენტის ApiClient-ია (კონტრაქტში DbWebAgentName). ServerUser და ServerPass
-//საიდუმლოა: ღიად ინახება (README G2), მაგრამ არსად იბეჭდება
+//საიდუმლოა: ღიად ინახება (README G2), მაგრამ არსად იბეჭდება. DatabaseName არასავალდებულო ბაზის სახელია, რომელსაც
+//კლიენტი კავშირის ConnectionString-ში სვამს; სერვერი მას მხოლოდ ინახავს
 public sealed class DatabaseServerConnection : VersionedEntity<DatabaseServerConnectionId>
 {
     public const int NameMaxLength = 100;
@@ -20,12 +21,15 @@ public sealed class DatabaseServerConnection : VersionedEntity<DatabaseServerCon
 
     public const int ServerPassMaxLength = 256;
 
+    //SQL Server-ის sysname
+    public const int DatabaseNameMaxLength = 128;
+
     private readonly List<DatabaseFoldersSet> _databaseFoldersSets = [];
 
     public DatabaseServerConnection(DatabaseServerConnectionId id, string name, string databaseServerProvider,
         ApiClientId? dbWebAgentId, string? remoteDbConnectionName, string? serverAddress,
         bool windowsNtIntegratedSecurity, string? serverUser, string? serverPass, bool trustServerCertificate,
-        int connectionTimeOut, bool encrypt, int version) : base(id, version)
+        int connectionTimeOut, bool encrypt, string? databaseName, int version) : base(id, version)
     {
         Name = name;
         DatabaseServerProvider = databaseServerProvider;
@@ -38,6 +42,7 @@ public sealed class DatabaseServerConnection : VersionedEntity<DatabaseServerCon
         TrustServerCertificate = trustServerCertificate;
         ConnectionTimeOut = connectionTimeOut;
         Encrypt = encrypt;
+        DatabaseName = databaseName;
     }
 
     public string Name { get; private set; }
@@ -54,16 +59,18 @@ public sealed class DatabaseServerConnection : VersionedEntity<DatabaseServerCon
     public bool TrustServerCertificate { get; private set; }
     public int ConnectionTimeOut { get; private set; }
     public bool Encrypt { get; private set; }
+    public string? DatabaseName { get; private set; }
     public IReadOnlyList<DatabaseFoldersSet> DatabaseFoldersSets => _databaseFoldersSets;
 
     public static DatabaseServerConnection Create(string name, string databaseServerProvider,
         ApiClientId? dbWebAgentId, string? remoteDbConnectionName, string? serverAddress,
         bool windowsNtIntegratedSecurity, string? serverUser, string? serverPass, bool trustServerCertificate,
-        int connectionTimeOut, bool encrypt, IEnumerable<DatabaseFoldersSet> databaseFoldersSets)
+        int connectionTimeOut, bool encrypt, string? databaseName, IEnumerable<DatabaseFoldersSet> databaseFoldersSets)
     {
         var databaseServerConnection = new DatabaseServerConnection(DatabaseServerConnectionId.CreateUnique(), name,
             databaseServerProvider, dbWebAgentId, remoteDbConnectionName, serverAddress, windowsNtIntegratedSecurity,
-            serverUser, serverPass, trustServerCertificate, connectionTimeOut, encrypt, EntityVersion.Initial);
+            serverUser, serverPass, trustServerCertificate, connectionTimeOut, encrypt, databaseName,
+            EntityVersion.Initial);
         databaseServerConnection._databaseFoldersSets.AddRange(databaseFoldersSets);
         return databaseServerConnection;
     }
@@ -72,7 +79,7 @@ public sealed class DatabaseServerConnection : VersionedEntity<DatabaseServerCon
     //სახელის შეცვლა (მაგალითად, მხოლოდ რეგისტრის) იგივე ჩანაწერის განახლებაა
     public void Update(string name, string databaseServerProvider, ApiClientId? dbWebAgentId,
         string? remoteDbConnectionName, string? serverAddress, bool windowsNtIntegratedSecurity, string? serverUser,
-        string? serverPass, bool trustServerCertificate, int connectionTimeOut, bool encrypt,
+        string? serverPass, bool trustServerCertificate, int connectionTimeOut, bool encrypt, string? databaseName,
         IEnumerable<DatabaseFoldersSet> databaseFoldersSets)
     {
         List<DatabaseFoldersSet> newDatabaseFoldersSets = [.. databaseFoldersSets];
@@ -87,6 +94,7 @@ public sealed class DatabaseServerConnection : VersionedEntity<DatabaseServerCon
         TrustServerCertificate = trustServerCertificate;
         ConnectionTimeOut = connectionTimeOut;
         Encrypt = encrypt;
+        DatabaseName = databaseName;
         _databaseFoldersSets.Clear();
         _databaseFoldersSets.AddRange(newDatabaseFoldersSets);
         IncrementVersion();

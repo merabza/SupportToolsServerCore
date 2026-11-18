@@ -12,7 +12,7 @@ public sealed class DatabaseServerConnectionTests
     private static DatabaseServerConnection NewConnection(DatabaseServerConnectionId id, int version)
     {
         return new DatabaseServerConnection(id, "Pc1.Sql", "SqlServer", null, null, "pc1", false, "user-a",
-            "password-a", true, 30, false, version);
+            "password-a", true, 30, false, null, version);
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public sealed class DatabaseServerConnectionTests
         ApiClientId webAgentId = ApiClientId.CreateUnique();
 
         var connection = new DatabaseServerConnection(id, "Pc1.Sql", "WebAgent", webAgentId, "Main", "pc1", true,
-            "made-up-user", "made-up-password", true, 30, true, 5);
+            "made-up-user", "made-up-password", true, 30, true, "AppDb", 5);
 
         Assert.Equal(id, connection.Id);
         Assert.Equal("Pc1.Sql", connection.Name);
@@ -36,6 +36,7 @@ public sealed class DatabaseServerConnectionTests
         Assert.True(connection.TrustServerCertificate);
         Assert.Equal(30, connection.ConnectionTimeOut);
         Assert.True(connection.Encrypt);
+        Assert.Equal("AppDb", connection.DatabaseName);
         Assert.Empty(connection.DatabaseFoldersSets);
         Assert.Equal(5, connection.Version);
         Assert.Empty(connection.DomainEvents);
@@ -47,9 +48,9 @@ public sealed class DatabaseServerConnectionTests
         DatabaseFoldersSet main = DatabaseFoldersSet.Create("Default", @"D:\Bak", @"D:\Data", @"D:\Log");
 
         DatabaseServerConnection first = DatabaseServerConnection.Create("Pc1.Sql", "SqlServer", null, null, "pc1",
-            false, "made-up-user", "made-up-password", false, 15, false, [main]);
+            false, "made-up-user", "made-up-password", false, 15, false, "AppDb", [main]);
         DatabaseServerConnection second = DatabaseServerConnection.Create("Pc1.Sql", "SqlServer", null, null, "pc1",
-            false, null, null, false, 15, false, []);
+            false, null, null, false, 15, false, null, []);
 
         Assert.NotEqual(first.Id, second.Id);
         Assert.Equal("Pc1.Sql", first.Name);
@@ -63,6 +64,8 @@ public sealed class DatabaseServerConnectionTests
         Assert.False(first.TrustServerCertificate);
         Assert.Equal(15, first.ConnectionTimeOut);
         Assert.False(first.Encrypt);
+        Assert.Equal("AppDb", first.DatabaseName);
+        Assert.Null(second.DatabaseName);
         Assert.Equal([main], first.DatabaseFoldersSets);
         Assert.Empty(second.DatabaseFoldersSets);
         Assert.Equal(1, first.Version);
@@ -76,12 +79,13 @@ public sealed class DatabaseServerConnectionTests
         var id = DatabaseServerConnectionId.CreateUnique();
         DatabaseServerConnection connection = NewConnection(id, 2);
         connection.Update("Pc1.Sql", "SqlServer", null, null, "pc1", false, "user-a", "password-a", true, 30, false,
+            "OldDb",
             [DatabaseFoldersSet.Create("Default", "a", "b", "c"), DatabaseFoldersSet.Create("Second", "d", "e", "f")]);
         ApiClientId webAgentId = ApiClientId.CreateUnique();
         DatabaseFoldersSet other = DatabaseFoldersSet.Create("Other", @"E:\Bak", null, null);
 
         connection.Update("PC1.SQL", "WebAgent", webAgentId, "Main", "pc2", true, "user-b", "password-b", false, 60,
-            true, [other]);
+            true, "NewDb", [other]);
 
         Assert.Equal(id, connection.Id);
         Assert.Equal("PC1.SQL", connection.Name);
@@ -95,14 +99,16 @@ public sealed class DatabaseServerConnectionTests
         Assert.False(connection.TrustServerCertificate);
         Assert.Equal(60, connection.ConnectionTimeOut);
         Assert.True(connection.Encrypt);
+        Assert.Equal("NewDb", connection.DatabaseName);
         Assert.Equal([other], connection.DatabaseFoldersSets);
         Assert.Equal(4, connection.Version);
 
-        connection.Update("PC1.SQL", "SqlServer", null, null, null, false, null, null, false, 0, false, []);
+        connection.Update("PC1.SQL", "SqlServer", null, null, null, false, null, null, false, 0, false, null, []);
         Assert.Null(connection.DbWebAgentId);
         Assert.Null(connection.ServerAddress);
         Assert.Null(connection.ServerUser);
         Assert.Null(connection.ServerPass);
+        Assert.Null(connection.DatabaseName);
         Assert.Empty(connection.DatabaseFoldersSets);
         Assert.Equal(5, connection.Version);
     }
@@ -112,11 +118,11 @@ public sealed class DatabaseServerConnectionTests
     public void Update_KeepsTheFoldersSets_WhenTheyAreGivenFromTheAggregateItself()
     {
         DatabaseServerConnection connection = DatabaseServerConnection.Create("Pc1.Sql", "SqlServer", null, null,
-            "pc1", false, null, null, false, 15, false,
+            "pc1", false, null, null, false, 15, false, null,
             [DatabaseFoldersSet.Create("Default", "a", "b", "c"), DatabaseFoldersSet.Create("Second", "d", "e", "f")]);
         List<DatabaseFoldersSet> foldersSets = [.. connection.DatabaseFoldersSets];
 
-        connection.Update("Pc1.Sql", "SqlServer", null, null, "pc1", false, null, null, false, 15, false,
+        connection.Update("Pc1.Sql", "SqlServer", null, null, "pc1", false, null, null, false, 15, false, null,
             connection.DatabaseFoldersSets);
 
         Assert.Equal(foldersSets, connection.DatabaseFoldersSets);
@@ -130,7 +136,7 @@ public sealed class DatabaseServerConnectionTests
         List<DatabaseFoldersSet> foldersSets = [DatabaseFoldersSet.Create("Default", "a", "b", "c")];
 
         DatabaseServerConnection connection = DatabaseServerConnection.Create("Pc1.Sql", "SqlServer", null, null,
-            "pc1", false, null, null, false, 15, false, foldersSets);
+            "pc1", false, null, null, false, 15, false, null, foldersSets);
         foldersSets.Add(DatabaseFoldersSet.Create("Second", "d", "e", "f"));
 
         Assert.Equal(["Default"], connection.DatabaseFoldersSets.Select(x => x.Name));
